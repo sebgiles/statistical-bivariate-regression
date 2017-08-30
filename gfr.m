@@ -24,7 +24,7 @@ function [] = gfr()
     subplot(2,1,1)
     scatter(T.CrE, T.CrIDMS)
     refline(1,0)
-    title("Jaffe vs IDMS")
+    title('Jaffe vs IDMS')
 
     subplot(2,1,2)
     h = histogram( (T.CrE - T.CrIDMS)./cr);
