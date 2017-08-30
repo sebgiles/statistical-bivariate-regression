@@ -7,10 +7,10 @@ function [] = gfr()
 
     figure('position', [80, 80, 400, 720])
     subplot(2,1,1)
-    scatter(T.CrE, y)
+    scatter(T.CrE, y, 7, [1-X(:,3),zeros(n,1),X(:,3)])
     title('GFR vs Creatinine measured using Jaffe Method')
     subplot(2,1,2)
-    scatter(T.CrIDMS, y)
+    scatter(T.CrIDMS, y, 7, [1-X(:,3),zeros(n,1),X(:,3)])
     title('GFR vs Creatinine measured using IDMS Method')
 
     disp('GFR in funzione della concentrazione di siero-creatinina')
