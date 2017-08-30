@@ -1,5 +1,10 @@
 function [] = gfr()
+    % matlab mi avvisa di cambiare i nomi di colonne che non mi
+    % interessano, quindi spengo gli avvisi durante l'importazione
+    warning('off','all')
     T = readtable('table1.xlsx');
+    warning('on','all')
+    
     y = T.mGFR;
     n = length(y);
     cr = (T.CrE + T.CrIDMS) / 2;
