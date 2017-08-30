@@ -2,6 +2,8 @@ function [] = gfr()
     T = readtable('table1.xlsx');
     y = T.mGFR;
     n = length(y);
+    cr = (T.CrE + T.CrIDMS) / 2;
+    X = [cr T.Age T.Gender];
 
     figure('position', [80, 80, 400, 720])
     subplot(2,1,1)
@@ -24,7 +26,6 @@ function [] = gfr()
     refline(1,0)
     title("Jaffe vs IDMS")
 
-    cr = (T.CrE + T.CrIDMS) / 2;
     subplot(2,1,2)
     h = histogram( (T.CrE - T.CrIDMS)./cr);
     h.NumBins = 20;
@@ -39,8 +40,17 @@ function [] = gfr()
     close
     clear h
 
+    figure('position', [80, 80, 400, 400])
+    scatter(X(:,2),y, 7, [1-X(:,3),zeros(n,1),X(:,3)])
+    title('età vs gfr')
+    disp('x = età')
+    disp('y = GFR')
+    disp('Maschi in blu, femmine in rosso.')
+    disp(' ')
+    pause
+    close
+
     figure('position', [80, 80, 600, 600])
-    X = [cr T.Age T.Gender];
     scatter3(X(:,1),X(:,2),y, 7, [1-X(:,3),zeros(n,1),X(:,3)])
     title('GFR')
     disp('x = CR (media dei due metodi)')
