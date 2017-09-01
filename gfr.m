@@ -91,7 +91,8 @@ function [] = gfr()
       'EdgeColor', 'none')
     alpha(0.1)
 
-    legend('female','male','female MDRD Model','male MDRD Model');
+    legend('female','male','female MDRD Model','male MDRD Model', ...
+      'Location','northeast');
 
     title('GFR')
     xlabel('Creatinine (averaged) [mg/dL]')
