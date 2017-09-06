@@ -173,7 +173,8 @@ function [] = gfr()
     plot(T.Cr, T.Mayo,'k-.')
     plot(T.Cr, T.Schwartz2009,'k-')
 
-    legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', 'Schwartz2009');
+    legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
+      'Schwartz2009');
     xlabel('Creatinine concentration [mg/dL]')
     ylabel('GFR [mL/min]')
 
