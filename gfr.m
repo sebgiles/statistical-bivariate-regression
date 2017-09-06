@@ -6,6 +6,7 @@ function [] = gfr()
     T = readtable('table1.xlsx');
     warning('on','all')
     n = height(T);
+    T.Gender = logical(T.Gender);
 
     % ====== CALCULATE AVERAGE measured CR & SORT by it =========
     T.Cr = (T.CrE + T.CrIDMS) / 2;
@@ -31,32 +32,45 @@ function [] = gfr()
                   -0.205*(1-T.Gender)       );
 
 
-    % ====== PLOT CR vs GFR ======
-    figure('position', [80, 80, 400, 720])
-    subplot(2,1,1)
-    scatter(T.CrE, T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
-    hold on
-    plot(NaN,NaN,'ob'); % dummy set to add second entry to legend, which by
-                        % default does not describe conditional colouring
+    %set(0,'DefaultFigureColormap',[1:64;zeros(1,64); 64:-1:1]'/64);
+    set(0,'DefaultFigureColormap',winter);
 
+    % ====== 1 - PLOT CR vs GFR ======
+    figure('position', [80, 80, 600, 720])
+    subplot(2,1,1)
+    hold on
+    plot(NaN,NaN,'ob'); % dummy
+    plot(NaN,NaN,'^b'); % dummy
+    scatter(T.CrE(~T.Gender), T.mGFR(~T.Gender), [], T.Age(~T.Gender), ...
+      'filled', 'o')
+    scatter(T.CrE(T.Gender), T.mGFR(T.Gender), [], T.Age(T.Gender), ...
+      'filled', '^')
+    h = colorbar;
     legend('female','male');
     xlabel('Creatinine measured by Jaffe Method [mg/dL]')
-    ylabel('GFR [mL/min]')
+    ylabel('mGFR [mL/min]')
+    title(h, 'age')
 
     subplot(2,1,2)
-    scatter(T.CrIDMS, T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
     hold on
-    plot(NaN,NaN,'ob'); % dummy like above
+    plot(NaN,NaN,'ob'); % dummy
+    plot(NaN,NaN,'^b'); % dummy
+    scatter(T.CrE(~T.Gender), T.mGFR(~T.Gender), [], T.Age(~T.Gender), ...
+      'filled', 'o')
+    scatter(T.CrE(T.Gender), T.mGFR(T.Gender), [], T.Age(T.Gender), ...
+      'filled', '^')
+    h = colorbar;
     legend('female','male');
     xlabel('Creatinine measured by IDMS Method [mg/dL]')
-    ylabel('GFR [mL/min]')
+    ylabel('mGFR [mL/min]')
+    title(h, 'age')
 
     disp('Press any key to continue')
     disp(' ')
     pause
     close
 
-    % ===== SHOW measurement discrepancies ======
+    % ===== 2 - SHOW measurement discrepancies ======
     figure('position', [80, 80, 400, 720])
     subplot(2,1,1)
     scatter(T.CrE, T.CrIDMS)
@@ -72,7 +86,7 @@ function [] = gfr()
     xlabel('Relative difference [%]')
     ylabel('count')
     disp('IDMS method yields systematically yet slightly')
-    disp('higher values thsn Jaffe method.')
+    disp('higher values than Jaffe method.')
 
     disp('Relative difference is calculated as')
     disp('difference divided by average.')
@@ -81,28 +95,34 @@ function [] = gfr()
     close
     clear h
 
-    % ==== PLOT AGE vs GFR =====
+    % ==== 3 - PLOT AGE vs GFR =====
     figure('position', [80, 80, 400, 400])
-    scatter(T.Age,T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
+    hold on
+    plot(NaN,NaN,'ob'); % dummy
+    plot(NaN,NaN,'^b'); % dummy
+    scatter(T.Age(~T.Gender), T.mGFR(~T.Gender), [], T.Cr(~T.Gender), ...
+      'filled', 'o')
+    scatter(T.Age(T.Gender), T.mGFR(T.Gender), [], T.Cr(T.Gender), ...
+      'filled', '^')
+    h = colorbar;
+    legend('female','male');
     title('Influence of age on GFR')
     xlabel('Age')
-    ylabel('GFR [mL/min]')
-    hold on
-    plot(NaN,NaN,'ob'); % dummy like above
-    legend('female','male');
+    ylabel('mGFR [mL/min]')
+    title(h,'Cr')
     disp('By looking at this plotted data GFR does')
     disp('not seem closely related to Age.')
     disp(' ')
     pause
     close
 
-    % ===== 3D CR vs AGE vs GFR scatter =====
+    % ===== 4 - 3D CR vs AGE vs GFR scatter =====
     figure('position', [80, 80, 600, 600])
-    scatter3(T.Cr,T.Age,T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
+    plot3(NaN,NaN,NaN,'ob'); % dummy like above
     hold on
-    plot(NaN,NaN,'ob'); % dummy like above
+    scatter3(T.Cr,T.Age,T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
 
-    % ===== MDRD model overlay =====
+    % ===== 5 - MDRD model overlay =====
     % preparo vettori per graficare la legge empiriche nota
     m = 20; % numero di punti per asse per il grafico
     [gridCR, gridAge] = ...
@@ -118,7 +138,7 @@ function [] = gfr()
       'EdgeColor', 'none')
     alpha(0.1)
 
-    legend('female','male','female MDRD Model','male MDRD Model', ...
+    legend('male','female','male MDRD Model','female MDRD Model', ...
       'Location','northeast');
 
     title('GFR')
@@ -132,18 +152,26 @@ function [] = gfr()
     pause
     close
 
-    % ===== compare measurements and estimates =====
+    % ===== 6 - compare measurements and estimates =====
+    disp(' ')
+    disp('showing eGFR from 4 different methods vs mGFR')
+
     figure('position', [80, 80, 600, 600])
-    scatter(T.Cr, T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
     hold on
-    plot(NaN,NaN,'ob'); % dummy set to add second entry to legend, which by
-                        % default does not describe conditional colouring
+    scatter(T.Cr(~T.Gender), T.mGFR(~T.Gender), [], T.Age(~T.Gender), ...
+      'filled', 'o')
+    scatter(T.Cr(T.Gender), T.mGFR(T.Gender), [], T.Age(T.Gender), ...
+      'filled', '^')
+    h = colorbar;
+    legend('female','male');
+    xlabel('Creatinine measured by Jaffe Method [mg/dL]')
+    ylabel('mGFR [mL/min]')
+    title(h, 'age')
 
-    plot(T.Cr, T.MDRD)
-    plot(T.Cr, T.CKDEPI)
-    plot(T.Cr, T.Mayo)
-    plot(T.Cr, T.Schwartz2009)
-
+    plot(T.Cr, T.MDRD, 'k:')
+    plot(T.Cr, T.CKDEPI, 'k--')
+    plot(T.Cr, T.Mayo,'k-.')
+    plot(T.Cr, T.Schwartz2009,'k-')
 
     legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', 'Schwartz2009');
     xlabel('Creatinine concentration [mg/dL]')
