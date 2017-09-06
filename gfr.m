@@ -111,7 +111,7 @@ function [] = gfr()
     ylabel('mGFR [mL/min]')
     title(h,'Cr')
     disp('By looking at this plotted data GFR does')
-    disp('not seem closely related to Age.')
+    disp('not seem strongly dependant Age.')
     disp(' ')
     pause
     close
@@ -154,7 +154,7 @@ function [] = gfr()
 
     % ===== 6 - compare measurements and estimates =====
     disp(' ')
-    disp('showing eGFR from 4 different methods vs mGFR')
+    disp('Showing eGFR from 4 different methods vs mGFR')
 
     figure('position', [80, 80, 600, 600])
     hold on
