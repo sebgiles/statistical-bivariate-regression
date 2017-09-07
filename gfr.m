@@ -111,7 +111,7 @@ function [] = gfr()
     ylabel('mGFR [mL/min]')
     title(h,'Cr')
     disp('By looking at this plotted data GFR does')
-    disp('not seem strongly dependent Age.')
+    disp('not seem strongly dependent on Age.')
     disp(' ')
     pause
     close
@@ -154,7 +154,7 @@ function [] = gfr()
 
     % ===== 6 - compare measurements and estimates =====
     disp(' ')
-    disp('Showing eGFR from 4 different methods vs mGFR')
+    disp('Showing eGFR from 4 different methods vs mGFR.')
 
     figure('position', [80, 80, 600, 600])
     hold on
@@ -175,19 +175,34 @@ function [] = gfr()
 
     ylim([0 1.2*max(T.mGFR)]);
 
-
     legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
       'Schwartz2009');
     xlabel('Creatinine concentration [mg/dL]')
     ylabel('GFR [mL/min]')
 
     pause
+    close
+
+    % ===== 5 - SBR =====
+    disp(' ')
+    disp('Showing result of statistical bivariate regression.')
+
+    figure('position', [80, 80, 600, 600])
+    hold on
+    scatter(T.Cr(~T.Gender), T.mGFR(~T.Gender), [], T.Age(~T.Gender), ...
+      'filled', 'o')
+    scatter(T.Cr(T.Gender), T.mGFR(T.Gender), [], T.Age(T.Gender), ...
+      'filled', '^')
+    h = colorbar;
+    legend('female','male');
+    xlabel('Creatinine concentration [mg/dL]')
+    ylabel('mGFR [mL/min]')
+    title(h, 'age')
 
     [X,Y] = sbr(T.Cr,T.mGFR,100,'Decreasing');
     plot(X,Y,'r-','LineWidth',1)
 
-    legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
-      'Schwartz2009', 'SBR');
+    legend('female','male', 'regression');
 
     pause
     close
