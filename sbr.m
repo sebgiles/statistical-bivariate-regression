@@ -21,10 +21,10 @@ function [X,Y] = sbr(Dx,Dy,R,M)
   Px = [0; Px];
   Py = [0; Py];
   X = linspace(max(Dx), min(Dx), R)';
-  if M == 'Increasing'
+  if strcmp(M, 'Increasing')
     Pxi = interp(x,Px,X);
   else
-    if M == 'Decreasing'
+    if strcmp(M, 'Decreasing')
       Pxi = interp(x,1-Px,X);
     else
       disp('Specify ''Increasing'' or ''Decreasing'' as 4th argument')
