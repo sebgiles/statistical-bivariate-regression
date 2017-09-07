@@ -183,7 +183,7 @@ function [] = gfr()
     pause
     close
 
-    % ===== 5 - SBR =====
+    % ===== 6 - SBR =====
     disp(' ')
     disp('Showing result of statistical bivariate regression.')
 
