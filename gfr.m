@@ -111,7 +111,7 @@ function [] = gfr()
     ylabel('mGFR [mL/min]')
     title(h,'Cr')
     disp('By looking at this plotted data GFR does')
-    disp('not seem strongly dependant Age.')
+    disp('not seem strongly dependent Age.')
     disp(' ')
     pause
     close
@@ -173,10 +173,21 @@ function [] = gfr()
     plot(T.Cr, T.Mayo,'k-.')
     plot(T.Cr, T.Schwartz2009,'k-')
 
+    ylim([0 1.2*max(T.mGFR)]);
+
+
     legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
       'Schwartz2009');
     xlabel('Creatinine concentration [mg/dL]')
     ylabel('GFR [mL/min]')
+
+    pause
+
+    [X,Y] = sbr(T.Cr,T.mGFR,100,'Decreasing');
+    plot(X,Y,'r-','LineWidth',1)
+
+    legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
+      'Schwartz2009', 'SBR');
 
     pause
     close
