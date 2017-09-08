@@ -164,8 +164,6 @@ function [] = gfr()
       'filled', '^')
     h = colorbar;
     legend('female','male');
-    xlabel('Creatinine measured by Jaffe Method [mg/dL]')
-    ylabel('mGFR [mL/min]')
     title(h, 'age')
 
     plot(T.Cr, T.MDRD, 'k:')
@@ -203,6 +201,26 @@ function [] = gfr()
     plot(X,Y,'r-','LineWidth',1)
 
     legend('female','male', 'regression');
+
+    pause
+
+    % ===== 6 - deltas =====
+
+    plot(T.Cr, T.Schwartz2009,'k-')
+    legend('female','male', 'Regression', 'Schwartz2009');
+
+    disp(' ')
+    disp('Schwartz2009 standard deviation from mGFR: ')
+    delta = T.Schwartz2009 - T.mGFR;
+    SchwartzSD = sqrt(delta'*delta/n);
+    disp(SchwartzSD)
+
+    disp('Regression standard deviation from mGFR: ')
+    T.rGFR = interp1(X,Y,T.Cr);
+    delta = T.rGFR - T.mGFR;
+    regSD = sqrt(delta'*delta/n);
+    disp(regSD)
+
 
     pause
     close
