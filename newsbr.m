@@ -2,8 +2,8 @@
 % decresing model hypothesis
 function [Qy] = newsbr(Dx,Dy,Qx)
 
-  Px = sum(Dx>=Qx')/length(Dx)*length(Dy);
+  P = sum(Dx>=Qx')/length(Dx)';
   Dy = sort(Dy);
-  Qy = interp1(Dy, Px);
+  Qy = interp1(Dy, P*length(Dy));
 
 end
