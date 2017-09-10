@@ -209,7 +209,7 @@ function [] = gfr()
     % ===== 6 - deltas =====
 
     plot(T.Cr, T.Schwartz2009,'k-')
-    legend('female','male', 'Regression', 'Schwartz2009');
+    legend('female','male', 'Regression','reg2', 'Schwartz2009');
 
     disp(' ')
     disp('Schwartz2009 standard deviation from mGFR: ')
