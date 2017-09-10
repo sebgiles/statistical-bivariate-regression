@@ -202,32 +202,50 @@ function [] = gfr()
     newY = newsbr(T.Cr,T.mGFR,X);
     plot(X,newY,'m-','LineWidth',1)
 
-    legend('female','male', 'regression', 'newreg');
+    legend('female','male', 'SBR', 'newSBR');
 
     pause
 
-    % ===== 6 - deltas =====
+    % ===== 6 - regression comparison =====
 
     plot(T.Cr, T.Schwartz2009,'c-')
-    T.Schwartz2009MH = 41.3*mean(T.Height)./T.CrIDMS;
 
+    T.Schwartz2009MH = 41.3*mean(T.Height)./T.CrIDMS;
     plot(T.Cr, T.Schwartz2009MH, 'k-')
-    legend('female','male', 'Regression','reg2', 'Schwartz2009', ...
-           'Schwartz2009 w/ mean height');
+
+    legend('female','male', 'SBR','newSBR', 'Schwartz2009', ...
+           'Schwartz2009 (simplified)');
 
     disp(' ')
-    disp('Schwartz2009 standard deviation from mGFR: ')
+    disp('Schwartz2009 simplification consists in using mean height.')
+
     delta = T.Schwartz2009 - T.mGFR;
     SchwartzSD = sqrt(delta'*delta/n);
-    disp(SchwartzSD)
+    SchwartzR = sqrt(sum(diff(T.Schwartz2009).^2)/ (n-1) );
 
-    disp('Regression standard deviation from mGFR: ')
-    T.rGFR = interp1(X,Y,T.Cr);
-    delta = T.rGFR - T.mGFR;
-    regSD = sqrt(delta'*delta/n);
-    disp(regSD)
+
+    delta = T.Schwartz2009MH - T.mGFR;
+    SchwartzMHSD = sqrt(delta'*delta/n);
+    SchwartzMHR = sqrt(sum(diff(T.Schwartz2009MH).^2)/ (n-1) );
+
+
+    T.SBRGFR = interp1(X,Y,T.Cr);
+    delta = T.SBRGFR - T.mGFR;
+    SBRSD = sqrt(delta'*delta/n);
+    SBRR = sqrt(sum(diff(T.SBRGFR).^2)/ (n-1) );
+
+    t_data = [SchwartzSD   SchwartzR
+              SchwartzMHSD SchwartzMHR
+              SBRSD        SBRR       ];
+
+    figure('position', [680, 580, 400, 100])
+    t = uitable('Data', t_data, 'InnerPosition', [0,0,600,100]);
+    t.ColumnName = {'SQM','R'};
+    t.RowName = {'Schwartz', 'Schwartz (simplified)', 'SBR'};
+
 
 
     pause
+    close
     close
 end
