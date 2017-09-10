@@ -208,8 +208,12 @@ function [] = gfr()
 
     % ===== 6 - deltas =====
 
-    plot(T.Cr, T.Schwartz2009,'k-')
-    legend('female','male', 'Regression','reg2', 'Schwartz2009');
+    plot(T.Cr, T.Schwartz2009,'c-')
+    T.Schwartz2009MH = 41.3*mean(T.Height)./T.CrIDMS;
+
+    plot(T.Cr, T.Schwartz2009MH, 'k-')
+    legend('female','male', 'Regression','reg2', 'Schwartz2009', ...
+           'Schwartz2009 w/ mean height');
 
     disp(' ')
     disp('Schwartz2009 standard deviation from mGFR: ')
