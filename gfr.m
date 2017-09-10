@@ -199,8 +199,10 @@ function [] = gfr()
 
     [X,Y] = sbr(T.Cr,T.mGFR,100,'Decreasing');
     plot(X,Y,'r-','LineWidth',1)
+    newY = newsbr(T.Cr,T.mGFR,X);
+    plot(X,newY,'m-','LineWidth',1)
 
-    legend('female','male', 'regression');
+    legend('female','male', 'regression', 'newreg');
 
     pause
 
