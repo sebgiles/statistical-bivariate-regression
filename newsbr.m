@@ -2,8 +2,7 @@
 % decresing model hypothesis
 function [Qy] = newsbr(Dx,Dy,Qx)
 
-  P = sum(Dx>=Qx')/length(Dx)';
-  Dy = sort(Dy);
-  Qy = interp1(Dy, P*length(Dy));
+  P = 1 - pmf(Dx,Qx); % = pmf(Dx,Qx) % for increasing model
+  Qy = invpmf(Dy, P);
 
 end
