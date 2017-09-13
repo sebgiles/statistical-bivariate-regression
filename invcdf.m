@@ -9,6 +9,7 @@ function x = invcdf(D, P)
   R = R + (R==0); % int in [1, nd], points in [0,1) are interpolated externally
   L = zeros(np,1);
 
+  % for each query
   for k = 1:np
     r = R(k);
     l = r;
@@ -34,6 +35,7 @@ function x = invcdf(D, P)
       % find last occurrence of previous element
       l = l - 1;
     end
+
     R(k) = r;
     L(k) = l;
   end
@@ -41,6 +43,5 @@ function x = invcdf(D, P)
   % vectorized interpolation
   d = (P-L)./(R-L);
   x = (D(L) + (D(R) - D(L)).*d);
-
 
 end
