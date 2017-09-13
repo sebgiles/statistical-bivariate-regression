@@ -29,7 +29,9 @@ function [] = sbrtest()
   ylabel('mGFR [mL/min]')
   title(h, 'age')
 
-  [X,Y] = sbr(T.Cr,T.mGFR,10000,'Decreasing');
+  R = 100000;
+
+  [X,Y] = sbr(T.Cr,T.mGFR,R,'Decreasing');
   plot(X,Y,'r-','LineWidth',1)
 
   newY = newsbr(T.Cr,T.mGFR,X);
@@ -45,15 +47,24 @@ function [] = sbrtest()
 
   disp(' ')
   disp('testing invpmf(pmf(x)) = x for creatinine data')
-  plot(X, invcdf(T.Cr, cdf(T.Cr, X)))
+  disp('worst relative error: ')
+  XX = invcdf(T.Cr, cdf(T.Cr, X));
+  plot(X, XX)
+  delta = (X-XX)./X;
+  SQM = max(abs(delta));
+  disp(SQM)
   grid on
   pause
   close
 
   disp(' ')
   disp('testing invpmf(pmf(x)) = x for mGFR data')
-  X = linspace(min(T.mGFR), max(T.mGFR), 10000)';
-  plot(X,invcdf(T.mGFR, cdf(T.mGFR, X)))
+  disp('worst relative error: ')
+  X = linspace(min(T.mGFR), max(T.mGFR), R)';
+  XX = invcdf(T.mGFR, cdf(T.mGFR, X));
+  delta = (X-XX)./X;
+  SQM = max(abs(delta));
+  disp(SQM)
   grid on
   pause
   close
