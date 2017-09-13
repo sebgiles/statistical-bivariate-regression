@@ -51,20 +51,21 @@ function [] = sbrtest()
   XX = invcdf(T.Cr, cdf(T.Cr, X));
   plot(X, XX)
   delta = (X-XX)./X;
-  SQM = max(abs(delta));
-  disp(SQM)
+  err = max(abs(delta));
+  disp(err)
   grid on
   pause
   close
 
   disp(' ')
-  disp('testing invpmf(pmf(x)) = x for mGFR data')
+  disp('testing invpmf(pmf(y)) = y for mGFR data')
   disp('worst relative error: ')
   X = linspace(min(T.mGFR), max(T.mGFR), R)';
   XX = invcdf(T.mGFR, cdf(T.mGFR, X));
+  plot(X, XX)
   delta = (X-XX)./X;
-  SQM = max(abs(delta));
-  disp(SQM)
+  err = max(abs(delta));
+  disp(err)
   grid on
   pause
   close
