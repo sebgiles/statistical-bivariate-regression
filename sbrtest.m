@@ -45,7 +45,7 @@ function [] = sbrtest()
 
   disp(' ')
   disp('testing invpmf(pmf(x)) = x for creatinine data')
-  plot(X, invpmf(T.Cr, pmf(T.Cr, X)))
+  plot(X, invcdf(T.Cr, cdf(T.Cr, X)))
   grid on
   pause
   close
@@ -53,7 +53,7 @@ function [] = sbrtest()
   disp(' ')
   disp('testing invpmf(pmf(x)) = x for mGFR data')
   X = linspace(min(T.mGFR), max(T.mGFR), 10000)';
-  plot(X,invpmf(T.mGFR, pmf(T.mGFR, X)))
+  plot(X,invcdf(T.mGFR, cdf(T.mGFR, X)))
   grid on
   pause
   close

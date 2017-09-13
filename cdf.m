@@ -1,5 +1,5 @@
-% evaluate probability mass fuction inferred from D for values x
-function P = pmf(D,x)
+% evaluate cumulative distribution fuction inferred from D for values x
+function P = cdf(D,x)
   D = sort(D);
   nd = length(D);
   nx = length(x);

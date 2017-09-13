@@ -1,6 +1,6 @@
-% evaluate inverse probability mass fuction inferred from D for probabilities P.
-% D must contain at least two different values.
-function x = invpmf(D, P)
+% evaluate inverse cumulative distribution fuction inferred from D for
+% probabilities P. (D must contain at least two different values.)
+function x = invcdf(D, P)
   nd = length(D);
   D = sort(D);
   np = length(P);
