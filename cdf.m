@@ -21,14 +21,13 @@ function P = cdf(D,x)
     end
 
     % reach last occurrence of right neighbour
-    while r < nd & D(r)==D(r+1)
+    while r < nd && D(r)==D(r+1)
       r = r + 1;
     end
 
     L(k) = l;
     R(k) = r;
   end
-
   % vectorized interpolation
   d = (x-D(L))./(D(R)-D(L));
   P = (L + (R - L).*d)/nd;
