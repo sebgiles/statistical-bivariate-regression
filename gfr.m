@@ -17,29 +17,29 @@ function [] = gfr()
   hold on
   plot(NaN,NaN,'ob'); % dummy
   plot(NaN,NaN,'^b'); % dummy
-  scatter(T.CrE(~T.Gender), T.mGFR(~T.Gender), [], T.Age(~T.Gender), ...
+  scatter(T.CrE(~T.Gender), T.mGFR(~T.Gender), [], T.Height(~T.Gender), ...
     'filled', 'o')
-  scatter(T.CrE(T.Gender), T.mGFR(T.Gender), [], T.Age(T.Gender), ...
+  scatter(T.CrE(T.Gender), T.mGFR(T.Gender), [], T.Height(T.Gender), ...
     'filled', '^')
   h = colorbar;
   legend('female','male');
   xlabel('Creatinine measured by Jaffe Method [mg/dL]')
   ylabel('mGFR [mL/min]')
-  title(h, 'age')
+  title(h, 'height [m]')
 
   subplot(2,1,2)
   hold on
   plot(NaN,NaN,'ob'); % dummy
   plot(NaN,NaN,'^b'); % dummy
-  scatter(T.CrIDMS(~T.Gender), T.mGFR(~T.Gender), [], T.Age(~T.Gender), ...
+  scatter(T.CrIDMS(~T.Gender), T.mGFR(~T.Gender), [], T.Height(~T.Gender), ...
     'filled', 'o')
-  scatter(T.CrIDMS(T.Gender), T.mGFR(T.Gender), [], T.Age(T.Gender), ...
+  scatter(T.CrIDMS(T.Gender), T.mGFR(T.Gender), [], T.Height(T.Gender), ...
     'filled', '^')
   h = colorbar;
   legend('female','male');
   xlabel('Creatinine measured by IDMS Method [mg/dL]')
   ylabel('mGFR [mL/min]')
-  title(h, 'age')
+  title(h, 'height [m]')
 
   disp('Press any key to continue')
   disp(' ')
@@ -69,7 +69,7 @@ function [] = gfr()
 
   disp('Relative difference is calculated as')
   disp('difference divided by average.')
-  disp('IDMS will be used from now on')
+  disp('IDMS will be used from now on.')
   pause
   close
   clear h
@@ -253,6 +253,8 @@ function [] = gfr()
   legend('female','male', 'NANS SBR','SBR', 'Schwartz2009', ...
          'Schwartz2009 (mean height)');
 
+  % ===== show table
+
   delta = T.Schwartz2009 - T.mGFR;
   SchwartzSD = sqrt(delta'*delta/n);
   SchwartzR = sqrt(sum(diff(T.Schwartz2009).^2)/ (n-1) );
@@ -266,14 +268,20 @@ function [] = gfr()
   SBRSD = sqrt(delta'*delta/n);
   SBRR = sqrt(sum(diff(T.SBRGFR).^2)/ (n-1) );
 
+  T.NANS_SBRGFR = interp1(X,nans_sbr_Y,T.CrIDMS);
+  delta = T.NANS_SBRGFR - T.mGFR;
+  NANS_SBRSD = sqrt(delta'*delta/n);
+  NANS_SBRR = sqrt(sum(diff(T.NANS_SBRGFR).^2)/ (n-1) );
+
   t_data = [SchwartzSD   SchwartzR
             SchwartzMHSD SchwartzMHR
-            SBRSD        SBRR       ];
+            SBRSD        SBRR
+            NANS_SBRSD   NANS_SBRR];
 
   figure('position', [680, 580, 400, 100])
   t = uitable('Data', t_data, 'InnerPosition', [0,0,600,100]);
   t.ColumnName = {'SQM','R'};
-  t.RowName = {'Schwartz', 'Schwartz (simplified)', 'SBR'};
+  t.RowName = {'Schwartz2009', 'Schwartz2009 (mean height)', 'SBR', 'NANS SBR'};
 
   pause
   close
