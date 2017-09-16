@@ -22,6 +22,7 @@ function [X,Y] = nans_sbr(Dx,Dy,R,M)
   Px = [0; Px];
   Py = [0; Py];
   x = [min(Dx); x' + (max(Dx)-min(Dx))/(2*Bx)];
+  x(end) = max(Dx); 
   y = [min(Dy); y' + (max(Dy)-min(Dy))/(2*By)];
 
   X = linspace(min(Dx), max(Dx), R)';
@@ -37,4 +38,5 @@ function [X,Y] = nans_sbr(Dx,Dy,R,M)
   end
 
   Y = interp1(Py,y,Pxi);
+
 end
