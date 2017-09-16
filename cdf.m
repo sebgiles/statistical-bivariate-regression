@@ -21,7 +21,7 @@ function P = cdf(D,x)
     end
 
     % reach last occurrence of right neighbour
-    while r < nd && D(r)==D(r+1)
+    while r < nd && D(r) == D(r+1)
       r = r + 1;
     end
 
