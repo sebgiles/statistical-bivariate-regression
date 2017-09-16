@@ -89,7 +89,7 @@ function [] = gfr()
   title('Influence of age on GFR')
   xlabel('Age')
   ylabel('mGFR [mL/min]')
-  title(h,'Cr')
+  title(h,'CrIDMS [mg/dL]')
 
   subplot(2,1,2)
   hold on
@@ -104,7 +104,7 @@ function [] = gfr()
   title('Influence of height on GFR')
   xlabel('Height [m]')
   ylabel('mGFR [mL/min]')
-  title(h,'Cr')
+  title(h,'CrIDMS [mg/dL]')
 
   disp(' ')
   disp('By looking at this plotted data GFR does')
