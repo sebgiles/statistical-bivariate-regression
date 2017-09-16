@@ -1,4 +1,4 @@
-function [] = demo()
+function [] = gfr()
 
   % ======= IMPORT data ============
   % stop warning about names being changed (maybe a bug)
