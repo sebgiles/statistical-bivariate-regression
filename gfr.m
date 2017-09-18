@@ -278,7 +278,7 @@ function [] = gfr()
             SBRSD        SBRR
             NANS_SBRSD   NANS_SBRR];
 
-  figure('position', [680, 580, 400, 100])
+  figure('position', [680, 580, 410, 100])
   t = uitable('Data', t_data, 'InnerPosition', [0,0,600,100]);
   t.ColumnName = {'SQM','R'};
   t.RowName = {'Schwartz2009', 'Schwartz2009 (mean height)', 'SBR', 'NANS SBR'};
