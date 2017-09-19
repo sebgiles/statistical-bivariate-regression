@@ -56,7 +56,7 @@ function [] = gfr()
   title('Discrepancy between measurement techniques')
 
   T.Cr = (T.CrE + T.CrIDMS) / 2;
-  T = sortrows(T,'Cr');
+  T = sortrows(T,'CrIDMS');
 
   subplot(2,1,2)
   h = histogram( 100*(T.CrIDMS - T.CrE)./T.Cr);
@@ -228,6 +228,7 @@ function [] = gfr()
   figure('position', [80, 80, 600, 600])
   hold on
 
+  % show datapoints
   scatter(T.CrIDMS(~T.Gender), T.mGFR(~T.Gender), [], T.Height(~T.Gender), ...
     'filled', 'o')
   scatter(T.CrIDMS(T.Gender), T.mGFR(T.Gender), [], T.Height(T.Gender), ...
@@ -238,41 +239,42 @@ function [] = gfr()
   ylabel('mGFR [mL/min]')
   title(h, 'height [m]')
 
-  [X,nans_sbr_Y] = nans_sbr(T.CrIDMS,T.mGFR ,R ,'Decreasing');
-  plot(X,nans_sbr_Y,'-','Color', [1,0.7,0],'LineWidth',1)
-  sbr_Y = sbr(T.CrIDMS,T.mGFR,X);
-  plot(X,sbr_Y,'r-','LineWidth',1)
+  % compute curves
+  [X,NANS_SBRGFR] = nans_sbr(T.CrIDMS, T.mGFR, R, 'Decreasing');
 
-  legend('female','male', 'NANS SBR', 'SBR');
+  SBRGFR = sbr(T.CrIDMS,T.mGFR,X);
 
-  plot(T.CrIDMS, T.Schwartz2009,'c-','LineWidth',1)
+  Schwartz2009MH = 41.3*mean(T.Height)./X;
 
+  [xschw, yschw] = rep2avg(T.CrIDMS,T.Schwartz2009);
+  Schwartz2009 = interp1(xschw, yschw, X);
+
+  % show curves
+  plot(X, Schwartz2009, 'c-', 'LineWidth', 1)
+  plot(X, Schwartz2009MH, 'b-','LineWidth',1)
+  plot(X, SBRGFR,'-','Color', [1,0.7,0],'LineWidth',1)
+  plot(X, NANS_SBRGFR, 'r-', 'LineWidth', 1)
+
+  legend('female','male', 'Schwartz2009', ...
+         'Schwartz2009 (mean height)','SBR','NANS SBR');
+
+  % calculate stddev
+  T.SBRGFR = sbr(T.CrIDMS,T.mGFR,T.CrIDMS);
+  T.NANS_SBRGFR = interp1(X, NANS_SBRGFR, T.CrIDMS);
   T.Schwartz2009MH = 41.3*mean(T.Height)./T.CrIDMS;
-  plot(T.CrIDMS, T.Schwartz2009MH, 'b-','LineWidth',1)
 
-  legend('female','male', 'NANS SBR','SBR', 'Schwartz2009', ...
-         'Schwartz2009 (mean height)');
+  SchwartzSD = sqm(T.Schwartz2009, T.mGFR);
+  SchwartzMHSD = sqm(T.Schwartz2009MH, T.mGFR);
+  SBRSD = sqm(T.SBRGFR, T.mGFR);
+  NANS_SBRSD = sqm(T.NANS_SBRGFR, T.mGFR);
 
-  % ===== show table
+  % roughness
+  SchwartzR = roughness(Schwartz2009);
+  SchwartzMHR = roughness(Schwartz2009MH);
+  SBRR = roughness(SBRGFR);
+  NANS_SBRR = roughness(NANS_SBRGFR);
 
-  delta = T.Schwartz2009 - T.mGFR;
-  SchwartzSD = sqrt(delta'*delta/n);
-  SchwartzR = sqrt(sum(diff(T.Schwartz2009).^2)/ (n-1) );
-
-  delta = T.Schwartz2009MH - T.mGFR;
-  SchwartzMHSD = sqrt(delta'*delta/n);
-  SchwartzMHR = sqrt(sum(diff(T.Schwartz2009MH).^2)/ (n-1) );
-
-  T.SBRGFR = interp1(X,sbr_Y,T.CrIDMS);
-  delta = T.SBRGFR - T.mGFR;
-  SBRSD = sqrt(delta'*delta/n);
-  SBRR = sqrt(sum(diff(T.SBRGFR).^2)/ (n-1) );
-
-  T.NANS_SBRGFR = interp1(X,nans_sbr_Y,T.CrIDMS);
-  delta = T.NANS_SBRGFR - T.mGFR;
-  NANS_SBRSD = sqrt(delta'*delta/n);
-  NANS_SBRR = sqrt(sum(diff(T.NANS_SBRGFR).^2)/ (n-1) );
-
+  % ui table
   t_data = [SchwartzSD   SchwartzR
             SchwartzMHSD SchwartzMHR
             SBRSD        SBRR
