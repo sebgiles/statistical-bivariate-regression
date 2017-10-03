@@ -20,6 +20,13 @@ function P = cdf(D,q)
       end
     end
 
+    if r == 1
+      while D(l) == D(l+1)
+        l = l + 1;
+      end
+      r = l + 1;
+    end
+
     % reach last occurrence of right neighbour
     while r < nd && D(r) == D(r+1)
       r = r + 1;
