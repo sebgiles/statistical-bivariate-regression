@@ -94,7 +94,7 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
   \caption{Cumulative distribution function estimation}
   \label{cdf_algo}
   \begin{algorithmic}[1]
-    \Function{cdf}{$D$,$q$}
+    \Function{cdf}{$D$, $q$}
     \State $D \gets sort(D)$
     \Comment Dataset is put into ascending order
     \State $n \gets length(D)$
@@ -102,16 +102,21 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
     \State $r \gets n$
     \While {$r - l > 1$}
     \State $m \gets \left \lfloor{(l+r)/2}\right \rfloor$
-    \If {$D[m] > q$}
+    \If {$D[m] > q \land D[m]\neq D[l]$}
     \State $r \gets m$
     \Else
     \State $l \gets m$
     \EndIf
     \EndWhile
+
+
+    \While{$D[r] = D[l]$}
+    \State $l \gets l - 1$
+    \EndWhile
+
     \While {$r < n \land D[r] = D[r+1]$}
     \State $r \gets r + 1$
     \EndWhile
-
     \State $d \gets (q-D[l])/(D[r]-D[l])$
     \State $p \gets (l + d \cdot (r - l))/n $
 
@@ -130,7 +135,7 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
 Here are a few comments about Algorithm \ref{cdf_algo}:
 \begin{itemize}
   \item \textbf{Line 2}: The algorithm is notably simplified by sorting $D$ into ascending order.
-  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in vector $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the greatest value in the vector 
+  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in vector $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the greatest value less than $q$, and $r$ as that of the smallest value greater than $q$.
   \item \textbf{Lines 4--13}: As we know, it will return $X_s \gets \mathbf{unique}(X)$, namely, the array $X_s$ will contain the unique values coming from the array $X$, sorted in ascending order. Now, $\mathbf{hist}(X,X_s)$ counts how many times the values in $X$ equal the values in $X_s$, namely, how many times each unique value is repeated in $X$. The list of repetitions is saved in the array $R_x$. For example, if the array $X$ contains no repetitions, $X_s$ will just be a sorted version of $X$ while all the values in $R_x$ will equal $1$.
   \item \textbf{Line 4}: The cumulative sum of all repetitions, normalized by the total number of samples $N$, will give an estimation of the cumulative distribution function of the dataset $X$. The first value of the CDF is $0$ by default so we do not store it.
   \item \textbf{Line 5}: The CDF is stored in the array $P_x$ and is conceptually a staircase approximation. If the query coordinate $x_q$ does not belong to the dataset $X$ (likely it won't), we do not know the value of the CDF at $x_q$ (let us denote it by $P_{xq}$). The simplest method to approximate the value of the CDF at $x_q$ is by linear interpolation. First, we look for the (unique) value in the dataset that is smaller than, or equal to, the value $x_q$. The variable $c$ will contain the index of the element in the array $X_s$ corresponding to such value.
@@ -153,7 +158,7 @@ Here are a few comments about Algorithm \ref{cdf_algo}:
     \Comment Dataset is put into ascending order
     \State $n \gets length(D)$
     \State $p \gets P_q \cdot n$
-    \State $r \gets  \left \lceil{P}\right \rceil$
+    \State $r \gets  \left \lceil{p}\right \rceil$
     \If {$r=0$}
     \State {$r\gets1$}
     \EndIf
@@ -177,7 +182,7 @@ Here are a few comments about Algorithm \ref{cdf_algo}:
     \State $ l \gets l - 1$
     \EndIf
 
-    \State $d \gets (P-l)/(r-l) $
+    \State $d \gets (p-l)/(r-l) $
     \State $q \gets D[l] + d \cdot (D[r]-D[l])$
 
     \State \Return $q$

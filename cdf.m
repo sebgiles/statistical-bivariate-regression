@@ -13,25 +13,21 @@ function P = cdf(D,q)
     r = nd;
     while r - l > 1
       m = floor((l+r)/2);
-      if D(m) > q(k)
+      if D(m) > q(k) && D(m) ~= D(l)
         r = m;
       else
         l = m;
       end
     end
 
-    if r == 1
-      while D(l) == D(l+1)
-        l = l + 1;
-      end
-      r = l + 1;
+    while D(r) == D(l)
+      l = l - 1;
     end
 
     % reach last occurrence of right neighbour
     while r < nd && D(r) == D(r+1)
       r = r + 1;
     end
-
     L(k) = l;
     R(k) = r;
   end
