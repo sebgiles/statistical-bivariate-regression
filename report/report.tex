@@ -1,0 +1,277 @@
+% Compilare con PDFLaTeX
+\documentclass[10pt,final]{siamltex}
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+%\usepackage{gensymb}
+\textwidth = 16cm
+\usepackage{pstricks}
+%\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[breakable]{tcolorbox}
+\usepackage{doi}
+%
+\begin{document}
+\title{Glomerular filtration rate estimation by a novel binning-less bivariate isotonic statistical regression method}
+\author{Sebastian~Giles, Simone~Fiori%
+\thanks{S. Giles is with the School of Information and Automation Engineering,
+Universit\`{a} Politecnica delle Marche,
+Via Brecce Bianche, I-60131 Ancona (Italy).
+\newline\indent
+S. Fiori is with Dipartimento di Ingegneria dell'Informazione,
+Universit\`{a} Politecnica delle Marche,
+Via Brecce Bianche, I-60131 Ancona (Italy).
+\newline\indent
+This draft is dated \today.}}
+\maketitle
+\def\bbbr{\mathbb{R}}
+\def\bbbx{\mathbb{X}}
+\def\bbby{\mathbb{Y}}
+\def\mdef{{\stackrel{{\mathrm{def}}}{=}}}
+% Footnotes in non-numerical fashion
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\def\to{\mathbf{\ to\ }}
+\setcounter{footnote}{1}
+%
+%
+\begin{abstract}
+  {\red L'abstract contiene un riassunto molto stringato del problema affrontato, dell'applicazione e dei risultati.}
+\end{abstract}
+%
+\section{Introduction}
+Several real-world phenomena lack accurate mathematical descriptions. In these cases it is not possible to predict the value of a variable by plugging known quantities in to an analytically derived expression, therefore statistical methods must be employed to develop a model of the observed process. The most common set of tools used to infer a functional relationship between variables is regression analysis, here only bivariate regression techniques will be considered. The amount of available data is assumed to be enough to explain the relevant statistical features of the phenomenon underlying the data.
+
+Traditional forms of regression are based on some parametrised function whose graph is made to lie reasonably close to the points making up the experimental dataset. Values for the parameters are typically found using the least squares method.
+
+Isotonic regression allows greater freedom for the regression curve to fit data by constructing a piecewise linear function, described by a lookup table (LUT). Overfitting is avoided by requiring the function to be monotonic, this is obviously also a limit on the process we want to model. Various algorithms can be used to find the LUT values that satisfy a least squares condition.
+
+Statistical bivariate regression (SBR) constitutes an improvement over isotonic regression, its advantages derive from the fact that it relies on finding the relationship between the statistical distributions of the variables. SBR is not based on a least squares method so it does not require data to be associated in ordered pairs, this makes it ideal for correlating two quantities that cannot be both measured on the same individual. The algorithm presented in \cite{fiori} independently estimates the probability density functions (PDF) of the two variables by dividing the dataset ranges into bins and populating LUTs for the relative frequencies, the PDFs are then integrated to obtain the cumulative distribution functions (CDF) which are, or can be licitly adjusted to be, bijective and allow for the regression model to be obtained as the map between values with equal probabilities.
+
+This report describes an alternative algorithm developed to make bivariate statistical regression more versatile and faster over large datasets by entirely avoiding the binning and integration operations.
+
+Glomerular filtration rate (GFR) is used as an indicator of kidney function, as such it is relevant for  assessing progression of renal disease, it is also frequently required for evaluating optimal dosage for medications. However, determination of true GFR is time-consuming, costly, and difficult to perform. Thus, there is considerable interest in developing formulas to estimate GFR using simpler parameters such as age, weight, height and sex and values which can be more conveniently measured as part of a blood test.
+
+The present report is organized as follows. Section 2 recalls the notion of bivariate statistical re- gression and explains the main idea and the details about the proposed binning-less bivariate statistical regression algorithm. Section 3 explains an analysis of the glomerular-filtration-rate (GFR) estimation based on creatinine levels and illustrates such analysis by means of numerical tests performed on a dataset drawn from a study on pediatric patients in mainland China. Section 4 concludes the paper.
+%
+\section{Binning-less bivariate statistical regression algorithm}
+%
+Given the random variables $X$ and $Y$, for which we expect the existance of a monotonic function $f$ such that $Y=f(X)$, let $D_X \in \mathbb{R}^n$ and $D_Y \in \mathbb{R}^m$ be vectors whose components are realizations of $X$ and $Y$ respectively.
+
+The developed regression algorithm is encapsulated in a function that takes the $D_X$ and $D_Y$ dataset vectors along with an $x$ for which the estimated value of $f(x)$ is returned.
+
+Denoting by $P_X(x)$ and by $P_Y(y)$ the respective CDFs of $X$ and $Y$, we recall from our previous work that
+\begin{equation}
+f(x)=P_Y^{-1}(P_X(x)) \text{ if $f$ is monotonically increasing},
+\end{equation}
+\begin{equation}
+f(x)=P_Y^{-1}(1-P_X(x)) \text{ if $f$ is monotonically decreasing}
+\end{equation}
+We further recall that, since the modeling solution is not unique, in general, we assumed that the center of mass of the $X$ data corresponds to the center of mass of the $Y$ data.
+
+The regression procedure can be separated into two parts: the evaluation of a CDF and the evaluation of an inverse CDF. In this report the former is handled by the $cdf$ function defined in Algorithm \ref{cdf_algo}, the latter by $invcdf$ defined in Algorithm \ref{invcdf_algo}. Besides the argument for the CDF (or inverse CDF) both procedures require a dataset from which to infer the actual distributions. Algorithm \ref{regression_algo} provides pseudocode for putting the two parts together.
+
+\begin{algorithm}
+  \caption{Statistical Bivariate Regression}
+  \label{regression_algo}
+  \begin{algorithmic}[1]
+    \Function{statisticalRegression}{$D_x$,$D_y$, $x_q$}
+    \State $P \gets cdf(D_x, Q_x)$
+    \Comment Evaluate CDF for value $Q_x$ in data set $D_x$
+    \State $y_q \gets invcdf(D_y, P)$
+    \Comment Evaluate inverse CDF for probability $P$ on data set $D_y$
+    \State \Return $y_q$
+    \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Cumulative distribution function estimation algorithm}
+%
+This section explains a procedure to estimate the value of $P(q)$, CDF of a generic random variable for which $n$ realizations are stored as the components of the vector $D$.
+The main idea to avoid binning is to estimate the cumulative distribution function of the dataset without resorting to an estimate of the probability density function first, this can be done by embracing the definition of CDF. Fundamentally this means counting the number of realizations that are less than or equal to $q$ and dividing by $n$. The solution shown in algorithm \ref{cdf_algo} allows for a continuos, strictly monotonic interpolation for values which are not included in the dataset. Please mind that 1-based vectors are used.
+
+\begin{algorithm}
+  \caption{Cumulative distribution function estimation}
+  \label{cdf_algo}
+  \begin{algorithmic}[1]
+    \Function{cdf}{$D$,$q$}
+    \State $D \gets sort(D)$
+    \Comment Dataset is put into ascending order
+    \State $n \gets length(D)$
+    \State $l \gets 1$
+    \State $r \gets n$
+    \While {$r - l > 1$}
+    \State $m \gets \left \lfloor{(l+r)/2}\right \rfloor$
+    \If {$D[m] > q$}
+    \State $r \gets m$
+    \Else
+    \State $l \gets m$
+    \EndIf
+    \EndWhile
+    \While {$r < n \land D[r] = D[r+1]$}
+    \State $r \gets r + 1$
+    \EndWhile
+
+    \State $d \gets (q-D[l])/(D[r]-D[l])$
+    \State $p \gets (l + d \cdot (r - l))/n $
+
+    % trim out of range interpolations
+    \If {$p<0$}
+    \State {$p\gets0$}
+    \ElsIf {$p>1$}
+    \State {$p\gets1$}
+    \EndIf
+
+    \State \Return $p$
+    \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Here are a few comments about Algorithm \ref{cdf_algo}:
+\begin{itemize}
+  \item \textbf{Line 2}: The algorithm is notably simplified by sorting $D$ into ascending order.
+  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in vector $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the greatest value in the vector 
+  \item \textbf{Lines 4--13}: As we know, it will return $X_s \gets \mathbf{unique}(X)$, namely, the array $X_s$ will contain the unique values coming from the array $X$, sorted in ascending order. Now, $\mathbf{hist}(X,X_s)$ counts how many times the values in $X$ equal the values in $X_s$, namely, how many times each unique value is repeated in $X$. The list of repetitions is saved in the array $R_x$. For example, if the array $X$ contains no repetitions, $X_s$ will just be a sorted version of $X$ while all the values in $R_x$ will equal $1$.
+  \item \textbf{Line 4}: The cumulative sum of all repetitions, normalized by the total number of samples $N$, will give an estimation of the cumulative distribution function of the dataset $X$. The first value of the CDF is $0$ by default so we do not store it.
+  \item \textbf{Line 5}: The CDF is stored in the array $P_x$ and is conceptually a staircase approximation. If the query coordinate $x_q$ does not belong to the dataset $X$ (likely it won't), we do not know the value of the CDF at $x_q$ (let us denote it by $P_{xq}$). The simplest method to approximate the value of the CDF at $x_q$ is by linear interpolation. First, we look for the (unique) value in the dataset that is smaller than, or equal to, the value $x_q$. The variable $c$ will contain the index of the element in the array $X_s$ corresponding to such value.
+  \item \textbf{Line 6--10}: If the counter $c$ points to the last entry in the array, then set $P_{xq}=1$ because we cannot go beyond this point. If the counter $c$ points to the middle of the array, approximate $P_{xq}$ by a linear interpolation, which arises as the solution of the linear equation $\tfrac{x_q-X_s[c]}{X_s[c+1]-X_s[c]}=\tfrac{P_{xq}-P_x[c]}{P_x[c+1]-P_x[c]}$.
+  \item \textbf{Line 11}: The variable $M$ contains the number of data-points in the array $Y$.
+  \item \textbf{Line 12-13}: Returns an estimation of the cumulative distribution function of the dataset $Y$ similarly to what has been done for the dataset $X$.
+  \item \textbf{Line 14}: The staircase approximation of the CDF is stored in the array $P_y$. Let us denote the value of the CDF at the (unknown) point $y_q$ as $P_{yq}$. By definition, $y_q$ is the $y$-coordinate corresponding to the $x$-coordinate $x_q$ if $P_{xq} = P_{yq}$. The equality is not exactly verified, in practice, therefore we first identify the value of $P_y$ which is smaller than, or equal to, $P_{xq}$, pointed by the index $c$.
+  \item \textbf{Line 15--19}: If $c$ points to the end of the array, then set $y_q$ as the largest value in the dataset $Y_s$ (since the values are sorted in ascending order, the largest value corresponds to the tail of the array), because we cannot go beyond this point. If $c$ points to the middle of the array, approximate $y_q$ by a linear interpolation, which arises as the solution of the equation $\tfrac{y_q-Y_s[c]}{Y_s[c+1]-Y_s[c]}=\tfrac{P_{xq}-P_y[c]}{P_y[c+1]-P_y[c]}$.
+\end{itemize}
+%
+
+
+
+\begin{algorithm}
+  \caption{Binning-less cumulative distribution inverse function evaluation}
+  \label{invcdf_algo}
+  \begin{algorithmic}[1]
+    \Function{invcdf}{$D$,$P_q$}
+    \State $D \gets sort(D)$
+    \Comment Dataset is put into ascending order
+    \State $n \gets length(D)$
+    \State $p \gets P_q \cdot n$
+    \State $r \gets  \left \lceil{P}\right \rceil$
+    \If {$r=0$}
+    \State {$r\gets1$}
+    \EndIf
+    \State $l \gets r$
+
+    \While{$r < n \land D[r] = D[r+1]$}
+    \State $ r \gets r + 1$
+    \EndWhile
+
+    \While {$l > 1 \land D[l - 1] = D[l]$}
+    \State $l \gets l - 1$
+    \EndWhile
+
+    \If {$l = 1$}
+    \State $l \gets r$
+    \State $r \gets r+1$
+    \While {$r < n \land D[r] = D[r+1]$}
+    \State $r \gets r + 1$
+    \EndWhile
+    \Else
+    \State $ l \gets l - 1$
+    \EndIf
+
+    \State $d \gets (P-l)/(r-l) $
+    \State $q \gets D[l] + d \cdot (D[r]-D[l])$
+
+    \State \Return $q$
+    \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Here are a few comments on the pseudo-code:
+%
+\begin{itemize}
+  \item \textbf{Line 2}: The variable $N$ contains the number of data-points in the array $X$.
+  \item \textbf{Line 3}: As we know, it will return $X_s \gets \mathbf{unique}(X)$, namely, the array $X_s$ will contain the unique values coming from the array $X$, sorted in ascending order. Now, $\mathbf{hist}(X,X_s)$ counts how many times the values in $X$ equal the values in $X_s$, namely, how many times each unique value is repeated in $X$. The list of repetitions is saved in the array $R_x$. For example, if the array $X$ contains no repetitions, $X_s$ will just be a sorted version of $X$ while all the values in $R_x$ will equal $1$.
+  \item \textbf{Line 4}: The cumulative sum of all repetitions, normalized by the total number of samples $N$, will give an estimation of the cumulative distribution function of the dataset $X$. The first value of the CDF is $0$ by default so we do not store it.
+  \item \textbf{Line 5}: The CDF is stored in the array $P_x$ and is conceptually a staircase approximation. If the query coordinate $x_q$ does not belong to the dataset $X$ (likely it won't), we do not know the value of the CDF at $x_q$ (let us denote it by $P_{xq}$). The simplest method to approximate the value of the CDF at $x_q$ is by linear interpolation. First, we look for the (unique) value in the dataset that is smaller than, or equal to, the value $x_q$. The variable $c$ will contain the index of the element in the array $X_s$ corresponding to such value.
+  \item \textbf{Line 6--10}: If the counter $c$ points to the last entry in the array, then set $P_{xq}=1$ because we cannot go beyond this point. If the counter $c$ points to the middle of the array, approximate $P_{xq}$ by a linear interpolation, which arises as the solution of the linear equation $\tfrac{x_q-X_s[c]}{X_s[c+1]-X_s[c]}=\tfrac{P_{xq}-P_x[c]}{P_x[c+1]-P_x[c]}$.
+  \item \textbf{Line 11}: The variable $M$ contains the number of data-points in the array $Y$.
+  \item \textbf{Line 12-13}: Returns an estimation of the cumulative distribution function of the dataset $Y$ similarly to what has been done for the dataset $X$.
+  \item \textbf{Line 14}: The staircase approximation of the CDF is stored in the array $P_y$. Let us denote the value of the CDF at the (unknown) point $y_q$ as $P_{yq}$. By definition, $y_q$ is the $y$-coordinate corresponding to the $x$-coordinate $x_q$ if $P_{xq} = P_{yq}$. The equality is not exactly verified, in practice, therefore we first identify the value of $P_y$ which is smaller than, or equal to, $P_{xq}$, pointed by the index $c$.
+  \item \textbf{Line 15--19}: If $c$ points to the end of the array, then set $y_q$ as the largest value in the dataset $Y_s$ (since the values are sorted in ascending order, the largest value corresponds to the tail of the array), because we cannot go beyond this point. If $c$ points to the middle of the array, approximate $y_q$ by a linear interpolation, which arises as the solution of the equation $\tfrac{y_q-Y_s[c]}{Y_s[c+1]-Y_s[c]}=\tfrac{P_{xq}-P_y[c]}{P_y[c+1]-P_y[c]}$.
+\end{itemize}
+
+
+
+
+%\noindent\fcolorbox{blue}{lightgray}{%
+%    \minipage[h]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+\begin{tcolorbox}[colback=gray!30,%gray background
+  colframe=black,% black frame colour
+  width=\dimexpr\linewidth-2\fboxrule\relax,
+  arc=3mm, auto outer arc,
+  breakable
+  ]
+  \underline{\textsc{Small numerical example}}: Let $X=[4,1,4,2,3,1,1,2]$ and $Y=[10,     4,    {\red 5},10,     6,     8,     4,     4,     6]$, i.e., $N=8$, $M=9$. The actual underlying model is $f(x)=2x+2$. Note that the data aren't paired and there's an extra datum in $Y$ (in red). Let the query point be $x_q=\tfrac{5}{2}$. Then, the pseudo-code computes:
+  %
+  \begin{eqnarray*}
+    && X_s = [1,     2,     3,     4]\\
+    && R_x = [3,     2,     1,     2]\\
+    && P_x = [\tfrac{3}{8}, \tfrac{5}{8}, \tfrac{6}{8}, 1]\\
+    && c = 2.
+  \end{eqnarray*}
+  %
+  By linear interpolation, the pseudo-code computes
+  %
+  \begin{equation*}
+    P_{xq}=\frac{5}{8}+\frac{\left(\tfrac{6}{8}-\tfrac{5}{8}\right)\left(\tfrac{5}{2}-2\right)}{3-2}=\frac{11}{8}.
+  \end{equation*}
+  %
+  Further, the pseudo-code computes:
+  %
+  \begin{eqnarray*}
+    && Y_s = [4,     5,     6,     8,    10]\\
+    && R_y = [3,     1,     2,     1,     2]\\
+    && P_y = [\tfrac{3}{9}, \tfrac{4}{9}, \tfrac{6}{9}, \tfrac{7}{9}, 1]\\
+    && c = 3.
+  \end{eqnarray*}
+  %
+  By a further linear interpolation, the pseudo-code computes
+  %
+  \begin{equation*}
+    y_q = 6 + \frac{\left(\tfrac{11}{16}-\tfrac{6}{9}\right)\left(8-6\right)}{\tfrac{7}{9}-\tfrac{6}{9}}=\frac{51}{8},
+  \end{equation*}
+  %
+  that is, $y_q\approx 6.375$, while the exact value would be $2x_q+2=7$.
+
+  It is interesting to see that, if we take off the extra `5' datum from the set $Y$, the pseudo-code will return exactly $y_q=7$!
+  %\endminipage}
+\end{tcolorbox}
+%
+\section{Application to glomerular filtration rate estimation}\label{sec3}
+%
+{{\red Questa sezione presenta i dati, le loro rappresentazioni grafiche, i risultati delle regressioni, i confronti con i modelli analitici, e i relativi commenti esplicativi. Qui vanno spiegati anche gli indici di prestazione MSE e Roughness. Per quest'ultimo, si puo' fare riferimento alla regolarizzazione di Tikhonov riassunta in \cite{bishop}. Le figure, fatte con MATLAB, possono essere salvate in formato PDF e caricate all'interno del documento come mostrato sotto. Idem per la tabella che può essere salvata dal MATLAB direttamente in formato LaTeX.}}
+
+An example of result of application of the Algorithm~\ref{staircase_algo_mi} to a real-world dataset is shown in the Figure~\ref{bodyfat}.
+
+\vspace{5mm}
+%
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.3]{Experiment1a}
+  \caption{Example of figure.}
+  \label{bodyfat}
+\end{figure}
+%
+%
+\section{Conclusions}\label{sec4}
+%
+{{\red Questa sezione riassume i risultati, sia concettuali che pratici, ottenuti.}}
+%
+\begin{thebibliography}{99}
+  %
+  \bibitem{fiori} S. Fiori, ``Fast statistical regression in presence of a dominant independent variable'', \textit{Neural Computing and Applications}, Vol. 22, No. 7, pp. 1367 -- 1378, 2013
+  \bibitem{bishop} C.M. Bishop, ``Training with noise is equivalent to Tikhonov regularization'', \textit{Neural Computation}, Vol. 7, No. 1, pp. 108 -- 116, 1995
+  \bibitem{fgl} S. Fiori, T. Gong and H.K. Lee, ``Bivariate nonisotonic statistical regression by a lookup table neural system'', \textit{Cognitive Computation}, Vol. 7, No. 6, pp. 715 -- 730, 2015
+  \bibitem{gfr_plos_one} K. Zheng, M. Gong, Y. Qin, H. Song, X. Shi, Y. Wu, F. Li and X. Li, ``Validation of glomerular filtration rate-estimating equations in Chinese children'', \textit{PLoS ONE}, Vol. 12, No. 7, pp. e0180565 (\doi{10.1371/journal.pone.0180565}), 2017
+  %
+\end{thebibliography}
+\end{document}
