@@ -1,19 +1,19 @@
-% evaluate cumulative distribution fuction inferred from D for values x
-function P = cdf(D,x)
+% evaluate cumulative distribution fuction inferred from D for values q
+function P = cdf(D,q)
   D = sort(D);
   nd = length(D);
-  nx = length(x);
-  L = zeros(nx, 1);
-  R = zeros(nx, 1);
+  nq = length(q);
+  L = zeros(nq, 1);
+  R = zeros(nq, 1);
 
   % for each query
-  for k = 1:nx
+  for k = 1:nq
     % binary search for query's "neighbours"
     l = 1;
     r = nd;
     while r - l > 1
       m = floor((l+r)/2);
-      if D(m) > x(k)
+      if D(m) > q(k)
         r = m;
       else
         l = m;
@@ -29,7 +29,7 @@ function P = cdf(D,x)
     R(k) = r;
   end
   % vectorized interpolation
-  d = (x-D(L))./(D(R)-D(L));
+  d = (q-D(L))./(D(R)-D(L));
   P = (L + (R - L).*d)/nd;
 
   % trim out of range interpolations
