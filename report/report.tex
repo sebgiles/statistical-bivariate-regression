@@ -87,8 +87,8 @@ The regression procedure can be separated into two parts: the evaluation of a CD
 
 \section{Cumulative distribution function estimation algorithm}
 %
-This section explains a procedure to estimate the value of $P(q)$, CDF of a generic random variable for which $n$ realizations are stored as the components of the vector $D$.
-The main idea to avoid binning is to estimate the cumulative distribution function of the dataset without resorting to an estimate of the probability density function first, this can be done by embracing the definition of CDF. Fundamentally this means counting the number of realizations that are less than or equal to $q$ and dividing by $n$. The solution shown in algorithm \ref{cdf_algo} allows for a continuos, strictly monotonic interpolation for values which are not included in the dataset. Please mind that 1-based vectors are used.
+This section explains a procedure to estimate the value of the CDF $P(q)$ of a generic random variable for which $n$ realizations are stored as the components of the vector $D$.
+The main idea to avoid binning is to estimate the cumulative distribution function of the dataset without resorting to an estimate of the probability density function first, this can be done by embracing the definition of CDF itself, which simply leads us to counting the number of realizations that are less than or equal to $q$ and dividing by $n$. The solution shown in algorithm \ref{cdf_algo} expands this idea to allow for a continuos, strictly monotonic interpolation for values which are not included in the original dataset. Please mind that 1-based vectors are used.
 
 \begin{algorithm}
   \caption{Cumulative distribution function estimation}
@@ -135,17 +135,17 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
 Here are a few comments about Algorithm \ref{cdf_algo}:
 \begin{itemize}
   \item \textbf{Line 2}: The algorithm is notably simplified by sorting $D$ into ascending order.
-  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in vector $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the last value less than $q$, and $r$ as that of the first value greater than $q$.
+  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in vector $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the last value less than $q$, and $r$ as that of the first value greater than $q$. The only exception that may occur is handled in lines 14--16.
   \item \textbf{Line 8}: Making sure that $D[m]\neq D[l]$ is needed to stop $l$ and $r$ converging to $1$ and $2$ respectively, in the case that $q$ is smaller than all elements in $D$.
   \item \textbf{Lines 14--16}: This loop is needed to fix $l$ in the case it converges to $n-1$ as a consequence of $q$ being greater than all values in $D$.
   \item \textbf{Lines 17--19}: The previous operations already guarantee that $l$ is the last index for the value $D[l]$, this means there are $l$ elements in D which are less than or equal to $D[l]$. This loop finds $r$, the count of elements that are less than or equal to $D[r]$.
-  \item \textbf{Line 20-21}: $P(D[l])$ can be estimated by $l/n$ whilst $P(D[r])$ can be estimated by $r/n$, nearby values are obtained via linear interpolation.
+  \item \textbf{Line 20-21}: $P(D[l])$ can be estimated by $l/n$ whilst $P(D[r])$ can be estimated by $r/n$, $P(q)$ is obtained via linear interpolation.
   \item \textbf{Lines 22--26}: These checks limit the CDF for values outside the range of $D$.
 \end{itemize}
 %
 
 \begin{algorithm}
-  \caption{Inverse Cumulative distribution dunction estimation}
+  \caption{Inverse Cumulative distribution function estimation}
   \label{invcdf_algo}
   \begin{algorithmic}[1]
     \Function{invcdf}{$D$,$P_q$}
@@ -198,48 +198,30 @@ Here are a few comments about Algorithm \ref{invcdf_algo}:
 \end{itemize}
 %
 
-%\noindent\fcolorbox{blue}{lightgray}{%
-%    \minipage[h]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
 \begin{tcolorbox}[colback=gray!30,%gray background
   colframe=black,% black frame colour
   width=\dimexpr\linewidth-2\fboxrule\relax,
   arc=3mm, auto outer arc,
   breakable
   ]
-  \underline{\textsc{Small numerical example}}: Let $X=[4,1,4,2,3,1,1,2]$ and $Y=[10,     4,    {\red 5},10,     6,     8,     4,     4,     6]$, i.e., $N=8$, $M=9$. The actual underlying model is $f(x)=2x+2$. Note that the data aren't paired and there's an extra datum in $Y$ (in red). Let the query point be $x_q=\tfrac{5}{2}$. Then, the pseudo-code computes:
-  %
-  \begin{eqnarray*}
-    && X_s = [1,     2,     3,     4]\\
-    && R_x = [3,     2,     1,     2]\\
-    && P_x = [\tfrac{3}{8}, \tfrac{5}{8}, \tfrac{6}{8}, 1]\\
-    && c = 2.
-  \end{eqnarray*}
-  %
-  By linear interpolation, the pseudo-code computes
-  %
-  \begin{equation*}
-    P_{xq}=\frac{5}{8}+\frac{\left(\tfrac{6}{8}-\tfrac{5}{8}\right)\left(\tfrac{5}{2}-2\right)}{3-2}=\frac{11}{8}.
-  \end{equation*}
-  %
-  Further, the pseudo-code computes:
-  %
-  \begin{eqnarray*}
-    && Y_s = [4,     5,     6,     8,    10]\\
-    && R_y = [3,     1,     2,     1,     2]\\
-    && P_y = [\tfrac{3}{9}, \tfrac{4}{9}, \tfrac{6}{9}, \tfrac{7}{9}, 1]\\
-    && c = 3.
-  \end{eqnarray*}
-  %
-  By a further linear interpolation, the pseudo-code computes
-  %
-  \begin{equation*}
-    y_q = 6 + \frac{\left(\tfrac{11}{16}-\tfrac{6}{9}\right)\left(8-6\right)}{\tfrac{7}{9}-\tfrac{6}{9}}=\frac{51}{8},
-  \end{equation*}
-  %
-  that is, $y_q\approx 6.375$, while the exact value would be $2x_q+2=7$.
+  \underline{\textsc{Small numerical example}}: Let $X=[2,3,5,5,6,6,7,9]$, $Y=[6,7,10,10,11,11,11,12,15,20]$, i.e., $n=8$, $m=10$. The actual underlying model is $f(x)=2x+2$. Note that the data aren't paired. Both vectors are already sorted for simplicity. Let the query point be $q=4$, we expect $y_q\approx10$.
 
-  It is interesting to see that, if we take off the extra `5' datum from the set $Y$, the pseudo-code will return exactly $y_q=7$!
-  %\endminipage}
+Let's first estimate $P_X(4)$: the $cdf$ algorithm will find $l=2$ and $r=4$. It then computes the linear interpolation:
+  %
+  \begin{equation*}
+    d = \tfrac{q-X[l]}{X[r]-X[l]} = \tfrac{4-3}{5-3} = 0.5
+    \quad\quad
+    P_X(4)=\tfrac{l+d\cdot(r-l)}{n}=\tfrac{2+0.5\cdot(4-2)}{8}=0.375
+  \end{equation*}
+
+Now it's time to estimate $P^-1_Y(0.375)$: the $invcdf$ algorithm will find $p = 0.375  m=3.75$, $r=4$ and $l=2$. By linear interpolation, it then finds
+    %
+    \begin{equation*}
+      d = \tfrac{p-l}{r-l} = \tfrac{3.75-2}{4-2} = 0.875
+    \end{equation*}
+    \begin{equation*}
+      P^-1_Y(0.375)=D[l]+d\cdot(D[r]-D[l])=7+0.875\cdot(10-7)=9.625
+    \end{equation*}
 \end{tcolorbox}
 %
 \section{Application to glomerular filtration rate estimation}\label{sec3}
