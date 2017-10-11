@@ -36,7 +36,7 @@ This draft is dated \today.}}
 %
 %
 \begin{abstract}
-  {\red L'abstract contiene un riassunto molto stringato del problema affrontato, dell'applicazione e dei risultati.}
+  Bivariate statistical regression is a method for finding the relationship between unpaired sets of data based on statistic distribution matching. In the present report an  algorithm is proposed to eliminate binning from the previously published procedure. The method is then applied to correlate Glomerular filtration rate (GFR) to serum creatinine concentration. GFR is an important indicator of kidney function, as direct measurement is highly impractical there is considerable interest in developing formulas to estimate it from parameters which are easier to obtain.
 \end{abstract}
 %
 \section{Introduction}
@@ -50,17 +50,17 @@ Statistical bivariate regression (SBR) constitutes an improvement over isotonic 
 
 This report describes an alternative algorithm developed to make bivariate statistical regression more versatile and faster over large datasets by entirely avoiding the binning and integration operations.
 
-Glomerular filtration rate (GFR) is used as an indicator of kidney function, as such it is relevant for  assessing progression of renal disease, it is also frequently required for evaluating optimal dosage for medications. However, determination of true GFR is time-consuming, costly, and difficult to perform. Thus, there is considerable interest in developing formulas to estimate GFR using simpler parameters such as age, weight, height and sex and values which can be more conveniently measured as part of a blood test.
+Glomerular filtration rate (GFR) is used as an indicator of kidney function, as such it is relevant for assessing progression of renal disease, it is also frequently required for evaluating optimal dosage for medications. However, determination of true GFR is time-consuming, costly, and difficult to perform. Thus, there is considerable interest in developing formulas to estimate GFR using simpler parameters such as age, weight, height and sex and values which can be more conveniently measured as part of a blood test.
 
 The present report is organized as follows. Section 2 recalls the notion of bivariate statistical re- gression and explains the main idea and the details about the proposed binning-less bivariate statistical regression algorithm. Section 3 explains an analysis of the glomerular-filtration-rate (GFR) estimation based on creatinine levels and illustrates such analysis by means of numerical tests performed on a dataset drawn from a study on pediatric patients in mainland China. Section 4 concludes the paper.
 %
 \section{Binning-less bivariate statistical regression algorithm}
 %
-Given the random variables $X$ and $Y$, for which we expect the existance of a monotonic function $f$ such that $Y=f(X)$, let $D_X \in \mathbb{R}^n$ and $D_Y \in \mathbb{R}^m$ be vectors whose components are realizations of $X$ and $Y$ respectively.
+Given the random variables $X$ and $Y$, for which we expect the existance of a monotonic function $f$ such that $Y=f(X)$, let $D_X \in \mathbb{R}^n$ and $D_Y \in \mathbb{R}^m$ be arrays whose components are realizations of $X$ and $Y$ respectively.
 
-The developed regression algorithm is encapsulated in a function that takes the $D_X$ and $D_Y$ dataset vectors along with an $x$ for which the estimated value of $f(x)$ is returned.
+The developed regression algorithm is encapsulated in a function that takes the $D_X$ and $D_Y$ dataset arrays along with an $x$ for which the estimated value of $f(x)$ is returned.
 
-Denoting by $P_X(x)$ and by $P_Y(y)$ the respective CDFs of $X$ and $Y$, we recall from our previous work that
+Denoting by $P_X(x)$ and by $P_Y(y)$ the respective CDFs of $X$ and $Y$, we recall from our previous \cite{fiori}\cite{fgl} work that
 \begin{equation}
   f(x)=P_Y^{-1}(P_X(x)) \text{ if $f$ is monotonically increasing},
 \end{equation}
@@ -69,17 +69,17 @@ Denoting by $P_X(x)$ and by $P_Y(y)$ the respective CDFs of $X$ and $Y$, we reca
 \end{equation}
 We further recall that, since the modeling solution is not unique, in general, we assumed that the center of mass of the $X$ data corresponds to the center of mass of the $Y$ data.
 
-The regression procedure can be separated into two parts: the evaluation of a CDF and the evaluation of an inverse CDF. In this report the former is handled by the $cdf$ function defined in Algorithm \ref{cdf_algo}, the latter by $invcdf$ defined in Algorithm \ref{invcdf_algo}. Besides the argument for the CDF (or inverse CDF) both procedures require a dataset from which to infer the actual distributions. Algorithm \ref{regression_algo} provides pseudocode for putting the two parts together.
+The regression procedure can be separated into two parts: the evaluation of a CDF and the evaluation of an inverse CDF. In this report the former is handled by the $cdf$ function defined in Algorithm \ref{cdf_algo}, the latter by $invcdf$ defined in Algorithm \ref{invcdf_algo}. Besides the argument for the CDF (or inverse CDF) both procedures require a dataset from which to infer the actual distributions. Algorithm \ref{regression_algo} provides pseudocode for putting the two parts together in the case that a monotonically increasing model is sought. If the model is expected to be monotonically decreasing then \textit{``P''} on Line 3 should be replaced by it's complement \textit{``1-P''}.
 
 \begin{algorithm}
   \caption{Statistical Bivariate Regression}
   \label{regression_algo}
   \begin{algorithmic}[1]
-    \Function{statisticalRegression}{$D_x$,$D_y$, $x_q$}
-    \State $P \gets cdf(D_x, Q_x)$
-    \Comment Evaluate CDF for value $Q_x$ in data set $D_x$
+    \Function{statisticalRegression}{$D_X$,$D_Y$, $x_q$}
+    \State $P \gets cdf(D_X, x_q)$
+    \Comment Evaluate CDF for value $x_q$ in data set $D_X$
     \State $y_q \gets invcdf(D_y, P)$
-    \Comment Evaluate inverse CDF for probability $P$ on data set $D_y$
+    \Comment Evaluate inverse CDF for probability $P$ on data set $D_Y$
     \State \Return $y_q$
     \EndFunction
   \end{algorithmic}
@@ -87,8 +87,8 @@ The regression procedure can be separated into two parts: the evaluation of a CD
 
 \section{Cumulative distribution function estimation algorithm}
 %
-This section explains a procedure to estimate the value of the CDF $P(q)$ of a generic random variable for which $n$ realizations are stored as the components of the vector $D$.
-The main idea to avoid binning is to estimate the cumulative distribution function of the dataset without resorting to an estimate of the probability density function first, this can be done by embracing the definition of CDF itself, which simply leads us to counting the number of realizations that are less than or equal to $q$ and dividing by $n$. The solution shown in algorithm \ref{cdf_algo} expands this idea to allow for a continuos, strictly monotonic interpolation for values which are not included in the original dataset. Please mind that 1-based vectors are used.
+This section explains a procedure to estimate the value of the CDF $P(q)$ of a generic random variable for which $n$ realizations are stored as the components of the array $D$.
+The main idea to avoid binning is to estimate the cumulative distribution function of the dataset without resorting to an estimate of the probability density function first, this can be done by embracing the definition of CDF itself, which simply leads us to counting the number of realizations that are less than or equal to $q$ and dividing by $n$. The solution shown in algorithm \ref{cdf_algo} expands this idea to allow for a continuos, strictly monotonic interpolation for values which are not included in the original dataset. Please mind that array indexing is 1-based.
 
 \begin{algorithm}
   \caption{Cumulative distribution function estimation}
@@ -135,11 +135,11 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
 Here are a few comments about Algorithm \ref{cdf_algo}:
 \begin{itemize}
   \item \textbf{Line 2}: The algorithm is notably simplified by sorting $D$ into ascending order.
-  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in vector $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the last value less than $q$, and $r$ as that of the first value greater than $q$. The only exception that may occur is handled in lines 14--16.
+  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in array $D$. The loop starts with indexes $l$ and $r$ as the extremes of $D$ and ends with $l$ as the index of the last value less than $q$, and $r$ as that of the first value greater than $q$. The only exception that may occur is handled in lines 14--16.
   \item \textbf{Line 8}: Making sure that $D[m]\neq D[l]$ is needed to stop $l$ and $r$ converging to $1$ and $2$ respectively, in the case that $q$ is smaller than all elements in $D$.
   \item \textbf{Lines 14--16}: This loop is needed to fix $l$ in the case it converges to $n-1$ as a consequence of $q$ being greater than all values in $D$.
-  \item \textbf{Lines 17--19}: The previous operations already guarantee that $l$ is the last index for the value $D[l]$, this means there are $l$ elements in D which are less than or equal to $D[l]$. This loop finds $r$, the count of elements that are less than or equal to $D[r]$.
-  \item \textbf{Line 20-21}: $P(D[l])$ can be estimated by $l/n$ whilst $P(D[r])$ can be estimated by $r/n$, $P(q)$ is obtained via linear interpolation.
+  \item \textbf{Lines 17--19}: The previous operations already guarantee that $l$ is the last index for the value $D[l]$, this means there are $l$ elements in $D$ which are less than or equal to $D[l]$. This loop finds $r$, the count of elements that are less than or equal to $D[r]$.
+  \item \textbf{Lines 20--21}: $P(D[l])$ can be estimated by $l/n$ whilst $P(D[r])$ can be estimated by $r/n$, $P(q)$ is obtained via linear interpolation.
   \item \textbf{Lines 22--26}: These checks limit the CDF for values outside the range of $D$.
 \end{itemize}
 %
@@ -185,7 +185,7 @@ Here are a few comments about Algorithm \ref{cdf_algo}:
   \end{algorithmic}
 \end{algorithm}
 
-Evaluation of the inverse CDF is based on tha same principle only applied in reverse: the input argument is a probability, it is multiplied by $n$ and rounded to an integer $r$. If the dataset $D$ is sorted, then there will be $r$ values less than or equal to $D[r]$. Algorithm \ref{invcdf_algo} allows for a continuos, strictly monotonic interpolation to yield values which are not included in the original dataset.
+Evaluation of the inverse CDF is based on the same principle only applied in reverse: the input argument is a probability, it is multiplied by $n$ and rounded to an integer $r$. If the dataset $D$ is sorted, then there will be $r$ values less than or equal to $D[r]$. Algorithm \ref{invcdf_algo} allows for a continuos, strictly monotonic interpolation to yield values which are not included in the original dataset.
 Here are a few comments about Algorithm \ref{invcdf_algo}:
 \begin{itemize}
   \item \textbf{Line 2}: The algorithm is notably simplified by sorting $D$ into ascending order.
@@ -193,8 +193,8 @@ Here are a few comments about Algorithm \ref{invcdf_algo}:
   \item \textbf{Lines 5--9}: $r$ and $l$ take the value of $p$ rounded to the next integer to be used as an index, this also requires $r$ and $l$ to be non-zero.
   \item \textbf{Lines 10--12}: $r$ is made to point to the last occurence of the smallest value whose CDF is greater than the requested probability.
   \item \textbf{Lines 13--15, 20}: $l$ is made to point to the last occurence of the greatest value whose CDF is less than the requested probability.
-  \item \textbf{Lines 16--22}: Allignments are made to allow interpolation for small proabilities.
-  \item \textbf{Line 20-21}: $P^-1(l/n)$ can be estimated by $D[l]$ whilst $P^-1(r/n)$ can be estimated by $D[r]$, nearby values are obtained via linear interpolation.
+  \item \textbf{Lines 16--22}: Alignments are made to allow interpolation for small probabilities.
+  \item \textbf{Line 20-21}: $P^-1(l/n)$ can be estimated by $D[l]$ whilst $P^{-1}(r/n)$ can be estimated by $D[r]$, nearby values are obtained via linear interpolation.
 \end{itemize}
 %
 
@@ -204,7 +204,7 @@ Here are a few comments about Algorithm \ref{invcdf_algo}:
   arc=3mm, auto outer arc,
   breakable
   ]
-  \underline{\textsc{Small numerical example}}: Let $X=[2,3,5,5,6,6,7,9]$, $Y=[6,7,10,10,11,11,11,12,15,20]$, i.e., $n=8$, $m=10$. The actual underlying model is $f(x)=2x+2$. Note that the data aren't paired. Both vectors are already sorted for simplicity. Let the query point be $q=4$, we expect $y_q\approx10$.
+  \underline{\textsc{Small numerical example}}: Let $X=[2,3,5,5,6,6,7,9]$, $Y=[6,7,10,10,11,11,11,12,15,20]$, i.e., $n=8$, $m=10$. The actual underlying model is $f(x)=2x+2$. Note that the data aren't paired. Both arrays are already sorted for simplicity. Let the query point be $q=4$, we expect $y_q\approx10$.
 
 Let's first estimate $P_X(4)$: the $cdf$ algorithm will find $l=2$ and $r=4$. It then computes the linear interpolation:
   %
@@ -225,21 +225,41 @@ Now it's time to estimate $P^-1_Y(0.375)$: the $invcdf$ algorithm will find $p =
 \end{tcolorbox}
 %
 \section{Application to glomerular filtration rate estimation}\label{sec3}
-%
-{{\red Questa sezione presenta i dati, le loro rappresentazioni grafiche, i risultati delle regressioni, i confronti con i modelli analitici, e i relativi commenti esplicativi. Qui vanno spiegati anche gli indici di prestazione MSE e Roughness. Per quest'ultimo, si puo' fare riferimento alla regolarizzazione di Tikhonov riassunta in \cite{bishop}. Le figure, fatte con MATLAB, possono essere salvate in formato PDF e caricate all'interno del documento come mostrato sotto. Idem per la tabella che può essere salvata dal MATLAB direttamente in formato LaTeX.}}
 
-An example of result of application of the Algorithm~\ref{staircase_algo_mi} to a real-world dataset is shown in the Figure~\ref{bodyfat}.
+Existing multivariate formulas for GFR estimation have been compared and validated  in \cite{gfr} over a dataset of 86 Chinese children and adolescents aged 1 through 18, authors of this research have included the dataset with their publication. The most effective was found to be the Schwartz2009 function:
+$$ eGFR[mL/min] = 41.3 \cdot \frac{height [m]}{serum creatinine concentration[mg/dL]}$$
+In order to apply SBR we must first assess the existance of a single dominant variable, this was clearly found to be the serum creatinine concentration, other variables used to estimate GFR are age and height, their effect however is marginal, as the scatter plots in Figure \ref{recessive} reveal no strong statistical features.
 
-\vspace{5mm}
-%
-\begin{figure}[h!]
+\begin{figure}[ht]
   \centering
-  \includegraphics[scale=0.3]{Experiment1a}
-  \caption{Example of figure.}
-  \label{bodyfat}
+  \makebox[\textwidth][c]{\includegraphics[scale=0.6]{figures/recessive}}
+  \caption{Plotting GFR as a function of Age or Height does not show very strong correlation.}
+  \label{recessive}
 \end{figure}
-%
-%
+
+As SBR generates a univariate model, for the sake of the comparison, the Schwartz2009 equation was simplified to be independent of height, this was done by replacing the variable with a constant equal to the mean height of all individuals in the dataset. This model was plotted in dark blue in Figure \ref{regression}, along with the datapoints, the regression curve obtained by SBR using the Numerical-Algebraic Neural System (NANS) method explained in \cite{fiori} and that obtained using the binning-less method described in Section 2.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.6]{figures/regression}
+  \caption{Data set with overlaid regression and estimation curves. }
+  \label{regression}
+\end{figure}
+
+The four curves in Figure \ref{regression} are compared on prediction performance, i.e. how close along the vertical axis the regression functions come to the measured data, an index (MSE) for this is calculated by averaging the squares of all errors. The Shwartz2009 curve has a low MSE as it also takes height into account, the SBR regressions are both better as they we're obtained from the same data we are now validating them on, anyway this shows that SBR is very effective at fitting data.
+Comparisons were also made to evaluate the generality of the models obtained, a good way to evaluate this is by calculating the roughness index
+$$ R = \sqrt{\sum_{i=3}^{n}{\frac{(y_i-2y_{i-1}+y_{i-2})^2}{n-2}}}.$$
+$R$ is the root mean square of the second order differences of the sequence $y_n$ so sharp changes in slope increase the value of $R$. An index similar to $R$ is also used in \cite{bishop} to prevent overfitting.
+The value of $R$ is expected to be greater for irregular curves and indeed it is close to zero for the simplified Schwartz2009 model, which is essentially a hyperbola, graph of a smooth function.
+The $MSE$ and $R$ indices can be read in the table of figure \ref{table}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.6]{figures/table}
+  \caption{Mean squared error with respect to measured GFR (MSE) and roughness(R) for the four estimation models. }
+  \label{table}
+\end{figure}
+
 \section{Conclusions}\label{sec4}
 %
 {{\red Questa sezione riassume i risultati, sia concettuali che pratici, ottenuti.}}
@@ -249,7 +269,7 @@ An example of result of application of the Algorithm~\ref{staircase_algo_mi} to 
   \bibitem{fiori} S. Fiori, ``Fast statistical regression in presence of a dominant independent variable'', \textit{Neural Computing and Applications}, Vol. 22, No. 7, pp. 1367 -- 1378, 2013
   \bibitem{bishop} C.M. Bishop, ``Training with noise is equivalent to Tikhonov regularization'', \textit{Neural Computation}, Vol. 7, No. 1, pp. 108 -- 116, 1995
   \bibitem{fgl} S. Fiori, T. Gong and H.K. Lee, ``Bivariate nonisotonic statistical regression by a lookup table neural system'', \textit{Cognitive Computation}, Vol. 7, No. 6, pp. 715 -- 730, 2015
-  \bibitem{gfr_plos_one} K. Zheng, M. Gong, Y. Qin, H. Song, X. Shi, Y. Wu, F. Li and X. Li, ``Validation of glomerular filtration rate-estimating equations in Chinese children'', \textit{PLoS ONE}, Vol. 12, No. 7, pp. e0180565 (\doi{10.1371/journal.pone.0180565}), 2017
+  \bibitem{gfr} K. Zheng, M. Gong, Y. Qin, H. Song, X. Shi, Y. Wu, F. Li and X. Li, ``Validation of glomerular filtration rate-estimating equations in Chinese children'', \textit{PLoS ONE}, Vol. 12, No. 7, pp. e0180565 (\doi{10.1371/journal.pone.0180565}), 2017
   %
 \end{thebibliography}
 \end{document}
