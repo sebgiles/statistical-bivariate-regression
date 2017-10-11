@@ -75,8 +75,8 @@ function [] = gfr()
   clear h
 
   % ==== PLOT3 - AGE vs GFR and HEIGHT vs GFR =====
-  figure('position', [80, 80, 400, 720])
-  subplot(2,1,1)
+  figure('position', [80, 80, 900, 400])
+  subplot(1,2,1)
   hold on
   plot(NaN,NaN,'ob'); % dummy
   plot(NaN,NaN,'^b'); % dummy
@@ -91,7 +91,7 @@ function [] = gfr()
   ylabel('mGFR [mL/min]')
   title(h,'CrIDMS [mg/dL]')
 
-  subplot(2,1,2)
+  subplot(1,2,2)
   hold on
   plot(NaN,NaN,'ob'); % dummy
   plot(NaN,NaN,'^b'); % dummy
@@ -256,7 +256,7 @@ function [] = gfr()
   plot(X, NANS_SBRGFR, 'r-', 'LineWidth', 1)
 
   legend('female','male', 'Schwartz2009', ...
-         'Schwartz2009 (mean height)','SBR','NANS SBR');
+         'Schwartz2009 (mean height)','Binning-less SBR','NANS SBR');
 
   % calculate stddev
   T.SBRGFR = sbr(T.CrIDMS,T.mGFR,T.CrIDMS);
@@ -282,8 +282,8 @@ function [] = gfr()
 
   figure('position', [680, 580, 410, 100])
   t = uitable('Data', t_data, 'InnerPosition', [0,0,600,100]);
-  t.ColumnName = {'SQM','R'};
-  t.RowName = {'Schwartz2009', 'Schwartz2009 (mean height)', 'SBR', 'NANS SBR'};
+  t.ColumnName = {'MSE','R'};
+  t.RowName = {'Schwartz2009', 'Schwartz2009 (mean height)', 'Binning-less SBR', 'NANS SBR'};
 
   pause
   close
