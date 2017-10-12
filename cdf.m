@@ -1,4 +1,4 @@
-% evaluate cumulative distribution fuction inferred from D for values q
+% evaluate cumulative distribution function inferred from D for values q
 function P = cdf(D,q)
   D = sort(D);
   nd = length(D);
