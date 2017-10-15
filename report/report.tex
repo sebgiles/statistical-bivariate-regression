@@ -226,15 +226,26 @@ Now it's time to estimate $P^-1_Y(0.375)$: the $invcdf$ algorithm will find $p =
 %
 \section{Application to glomerular filtration rate estimation}\label{gfr}
 
-Existing multivariate formulas for GFR estimation have been compared and validated  in \cite{gfr} over a dataset of 86 Chinese children and adolescents aged 1 through 18, authors of this research have included the dataset with their publication. The most effective (as can also be seen in Figure \ref{equations}) was found to be the Schwartz2009 equation \cite{schwartz}:
-$$ eGFR[mL/min] = 41.3 \cdot \frac{height [m]}{serum creatinine concentration[mg/dL]}$$
-
 \begin{figure}[ht]
   \centering
   \makebox[\textwidth][c]{\includegraphics[scale=0.6]{figures/equations}}
   \caption{Comparison of predictions made using the different equations \cite{gfr}.}
   \label{equations}
 \end{figure}
+
+Existing multivariate formulas for GFR estimation have been compared and validated in \cite{gfr} over a dataset of 86 Chinese children and adolescents aged 1 through 18, authors of this research have included the dataset with their publication. The most effective was found to be the Schwartz2009 equation \cite{schwartz} (from here on in this report units for $eGFR$ and Serum Creatinine concentration will be mL/min and mg/dL respectively, height is in meters):
+$$ eGFR = 41.3 \cdot \frac{height}{Serum Creatinine}.$$
+
+Over said data we also computed estimations using the other three widely employed formulas that follow and compared them with the results of the Schwartz2009 estimation. The MDRD 4-variable equation \cite{MDRD}:
+$$ eGFR = 186 \cdot Serum Creatinine^{-1.154}\cdot Age^{-0.203} \cdot [1.2010 \text{ if Black}] \cdot [0.742 \text{ if Female}].$$
+
+The CKD-EPI formula \cite{ckdepi} ($SCr$ is serum creatinine, $k$ is $0.7$ for females and $0.9$ for males, $a$ is $−0.329$ for females and $−0.411$ for males):
+$$ eGFR = 141 \cdot min(SCr/k,1)^a\cdot max(SCr/k,1)^{-1.209}\cdot0.993^{Age}\cdot [1.018 \text{ if Female}] \cdot [1.159 \text{ if Black}].$$
+
+The Mayo Quadratic formula \cite{mayo} (if $SCr$ is less than $0.8 mg/dL$, use $0.8 mg/dL$ for $SCr$):
+$$eGFR = exp(1.911+\frac{5.249}{SCr}-\frac{2.114}{SCr^2}-0.00686\cdot Age - [0.205 \text{ if Female}])$$
+
+Looking at Figure \ref{equations} it is clear that the Schwartz2009 equation outperforms all of the other functions.
 
 In order to apply SBR we must first assess the existance of a single dominant variable, this was clearly found to be the serum creatinine concentration, other variables used to estimate GFR are age and height, their effect however is marginal, as the scatter plots in Figure \ref{recessive} reveal no strong statistical features.
 
@@ -298,7 +309,9 @@ Keywords: Glomerular filtration rate (GFR); glomerular filtration rate (GFR) mea
 \bibitem{mgfr2}Clearance and beyond: the complementary roles of GFR measurement and injury biomarkers in acute kidney injury (AKI)
 Zoltán H. Endre, John W. Pickering, Robert J. Walker
 American Journal of Physiology - Renal Physiology Published 29 September 2011 Vol. 301 no. 4, F697-F707 DOI: 10.1152/ajprenal.00448.2010
-
+\bibitem{MDRD}Levey AS, Bosch JP, Lewis JB, Greene T, Rogers N, Roth D, et al. A More Accurate Method To Estimate Glomerular Filtration Rate from Serum Creatinine: A New Prediction Equation. Ann Intern Med. 1999;130:461–470. doi: 10.7326/0003-4819-130-6-199903160-00002
+\bibitem{ckdepi}Levey AS, Stevens LA, Schmid CH, et al. A New Equation to Estimate Glomerular Filtration Rate. Annals of internal medicine. 2009;150(9):604-612.
+\bibitem{mayo}Rule AD, Larson TS, Bergstralh EJ, Slezak JM, Jacobsen SJ, Cosio FG (December 2004). "Using serum creatinine to estimate glomerular filtration rate: accuracy in good health and in chronic kidney disease". Annals of Internal Medicine. 141 (12): 929–37.
 
 
   %
