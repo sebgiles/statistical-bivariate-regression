@@ -87,9 +87,9 @@ function [] = gfr()
   h = colorbar;
   legend('female','male');
   title('Influence of age on GFR')
-  xlabel('Age')
-  ylabel('mGFR [mL/min]')
-  title(h,'CrIDMS [mg/dL]')
+  xlabel('Age [years]')
+  ylabel('Measured GFR [mL/min]')
+  title(h,'sCr [mg/dL]')
 
   subplot(1,2,2)
   hold on
@@ -103,8 +103,8 @@ function [] = gfr()
   legend('female','male');
   title('Influence of height on GFR')
   xlabel('Height [m]')
-  ylabel('mGFR [mL/min]')
-  title(h,'CrIDMS [mg/dL]')
+  ylabel('Measured GFR [mL/min]')
+  title(h,'sCr [mg/dL]')
 
   disp(' ')
   disp('By looking at this plotted data GFR does')
@@ -181,8 +181,8 @@ function [] = gfr()
 
   legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
     'Schwartz2009');
-  xlabel('Creatinine concentration [mg/dL]')
-  ylabel('GFR [mL/min]')
+  xlabel('Measured serum creatinine concentration (sCr) [mg/dL]')
+  ylabel('Measured and estimated GFR [mL/min]')
 
   pause
   close
@@ -235,8 +235,8 @@ function [] = gfr()
     'filled', '^')
   h = colorbar;
   legend('female','male');
-  xlabel('Creatinine concentration [mg/dL]')
-  ylabel('mGFR [mL/min]')
+  xlabel('Serum creatinine concentration (sCr) [mg/dL]')
+  ylabel('Measured and estimated GFR [mL/min]')
   title(h, 'height [m]')
 
   % compute curves
@@ -250,11 +250,11 @@ function [] = gfr()
   Schwartz2009 = interp1(xschw, yschw, X);
 
   % show curves
-  plot(X, Schwartz2009, 'c-', 'LineWidth', 1)
-  plot(X, Schwartz2009MH, 'b-','LineWidth',1)
-  plot(X, SBRGFR,'-','Color', [1,0.7,0],'LineWidth',1)
-  plot(X, NANS_SBRGFR, 'r-', 'LineWidth', 1)
-
+  plot(X, Schwartz2009, 'k:', 'LineWidth', 0.8)
+  plot(X, Schwartz2009MH, 'k-.','LineWidth',0.6)
+  plot(X, SBRGFR,'k-','LineWidth',0.6)
+  plot(X, NANS_SBRGFR, 'k--', 'LineWidth', 0.6)
+  ylim([20,180]);
   legend('female','male', 'Schwartz2009', ...
          'Schwartz2009 (mean height)','Binning-less SBR','NANS SBR');
 
