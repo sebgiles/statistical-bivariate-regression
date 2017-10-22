@@ -43,7 +43,7 @@ Bivariate statistical regression is a method for finding a relationship between 
 \end{abstract}
 %
 \section{Introduction}\label{intro}
-Several real-world complex phenomena in vistually any branch of science lack accurate mathematical descriptions \cite{seismic,strontium}. In these cases, it is not possible to predict the value of a variable by plugging known quantities into an analytically derived expression, therefore, empirical methods must be employed to develop a model of the observed process. The most common set of tools used to infer a functional relationship between variables is regression analysis \cite{control, ts}. 
+Several real-world complex phenomena in vistually any branch of science lack accurate mathematical descriptions \cite{seismic,strontium}. In these cases, it is not possible to predict the value of a variable by plugging known quantities into an analytically derived expression, therefore, empirical methods must be employed to develop a model of the observed process. The most common set of tools used to infer a functional relationship between variables is regression analysis \cite{control, ts}.
 
 %Here only bivariate regression techniques will be considered. The amount of available data is assumed to be enough to explain the relevant statistical features of the phenomenon underlying the data.
 
@@ -218,8 +218,8 @@ The largest value of $\delta$ was found to be in the order of $10^{-15}$, which 
 %  arc=3mm, auto outer arc,
 %  breakable
 %  ]
-%  \underline{\textsc{Numerical example}}: 
-  
+%  \underline{\textsc{Numerical example}}:
+
 To end this section of the paper, let us consider a minimal working numerical example. Let $D_X=[2,3,5,5,6,6,7,9]$ and $D_Y=[6,7,10,10,11,11,11,12,15,20]$, i.e., $n=8$, $m=10$. The actual underlying model is $f(x)=2x+2$. Note that the data are not paired. Both arrays are already sorted for simplicity. Let the query point be $x_q=4$: we expect the result of statistical regression (Algorithm~1) to be $y_q\approx10$. The proposed procedure prescribes first to estimate the probability $P_X(4)$: the Algorithm~2 will find $l=2$ and $r=4$. The Algorithm~2 then will compute the linear interpolation:
 %
   \begin{equation*}
@@ -233,7 +233,7 @@ The proposed procedure prescribes next to estimate the inverse probability $P^{-
     d = \tfrac{p-l}{r-l} = \tfrac{3.75-2}{4-2} = 0.875 \Rightarrow
     P^{-1}_Y(0.375)=D[l]+d\cdot(D[r]-D[l])=7+0.875\cdot(10-7)=9.625.
   \end{equation*}
-% 
+%
 %\end{tcolorbox}
 %
 \section{Application to glomerular filtration rate estimation}\label{gfr}
@@ -270,7 +270,7 @@ where $k$ is $0.7$ for females and $0.9$ for males, while $a$ is $−0.329$ for 
 %
 If $sCr$ is less than $0.8$ mg/dL, it is recommended to use $0.8$ mg/dL for $sCr$.
 
-\item \textbf{Schwartz2009}: Updated Schwartz formula, also referred to as bedside Schwartz formula. It is one of several formulas to estimate GFR in pediatric patients, like the Counahan-Barratt formula based on blood serum creatinine concentration \cite{Counahan}, and the Grubb formula based on blood serum cystatin-C concentration \cite{simonsen}. In most cases, the bedside Schwartz formula allows rapid and reasonably accurate estimation of GFR for clinical use in children with chronic kidney disease. The updated Schwartz formula reads 
+\item \textbf{Schwartz2009}: Updated Schwartz formula, also referred to as bedside Schwartz formula. It is one of several formulas to estimate GFR in pediatric patients, like the Counahan-Barratt formula based on blood serum creatinine concentration \cite{Counahan}, and the Grubb formula based on blood serum cystatin-C concentration \cite{simonsen}. In most cases, the bedside Schwartz formula allows rapid and reasonably accurate estimation of GFR for clinical use in children with chronic kidney disease. The updated Schwartz formula reads
 %
 \begin{equation}
  \mathit{GFR} = 41.3 \cdot \frac{height}{sCr},
@@ -279,7 +279,7 @@ If $sCr$ is less than $0.8$ mg/dL, it is recommended to use $0.8$ mg/dL for $sCr
 where the serum creatinine concentration refers specifically to the values measured by the IDMS enzymatic method. The updated Schwarz formula is a standardized version of the original Schwartz formula $\mathit{GFR} = k \cdot \tfrac{height}{sCr}$, where the serum creatinine concentration refers specifically to the values measured by the Jaffe method, and the constant $k$ depends on muscle mass, which varies with a child's age, and ranges in $33-55$.
 \end{itemize}
 
-In the above formulas, measurement units of the GFR and the sCr values are mL/min/1.73m$^2$ [{\bf\red Nelle figure l'unita' di misura del GFR va corretta in mL/min/1.73m$^2$.}] and mg/dL respectively, while patients height is expressed in meters and patients age is expressed in years. % this will hold throughout this report.
+In the above formulas, measurement units of the GFR and the sCr values are mL/min/1.73m$^2$ and mg/dL respectively, while patients height is expressed in meters and patients age is expressed in years. % this will hold throughout this report.
 
 When measurement and calibration is more broadly available, glomerular filtration rate estimates using cystatin C may also exhibit broad clinical utility. Commonly used formulas based on blood serum cystatin C concentration levels and demographic variables are:
 
@@ -292,7 +292,7 @@ When measurement and calibration is more broadly available, glomerular filtratio
 %
 It may be useful as a confirmatory test in specific circumstances when estimation of GFR based on serum creatinine is less accurate, or when the clinical scenario summons a secondary test\cite{grubb,schwartz3}.
 
-\item \textbf{Filler formula}: The empirical Filler formula to estimate the glomerular filtration rate reads 
+\item \textbf{Filler formula}: The empirical Filler formula to estimate the glomerular filtration rate reads
 %
 \begin{equation}
  \textit{GFR} = 91.62 \cdot (cysC)^{-1.123}.
@@ -306,7 +306,7 @@ In the above formulas, the measurement unit of the cysC values is mg/L, while th
 %
 \subsection{Experimental results on statistical regression}
 %
-Existing multivariate formulas for GFR estimation have been compared and validated in \cite{gfr} over a dataset of 87 Chinese children and adolescents aged 1 through 18. The authors of the research have included their dataset with the publication. For each patient, the available data comprise age, gender, physical parameters (such as height and weight), GFR (measured using double-sample plasma clearance \cite{gold}), two values for serum creatinine concentration as well as cystatine-C and blood urea nitrogen concentration. The two values of serum creatinine concentration correspond to two different measurement techniques, namely, the Jaffe method and the IDMS enzymatic method. 
+Existing multivariate formulas for GFR estimation have been compared and validated in \cite{gfr} over a dataset of 87 Chinese children and adolescents aged 1 through 18. The authors of the research have included their dataset with the publication. For each patient, the available data comprise age, gender, physical parameters (such as height and weight), GFR (measured using double-sample plasma clearance \cite{gold}), two values for serum creatinine concentration as well as cystatine-C and blood urea nitrogen concentration. The two values of serum creatinine concentration correspond to two different measurement techniques, namely, the Jaffe method and the IDMS enzymatic method.
 
 The study \cite{gfr} compared four different formulas on the Chinese-children dataset, namely the original Schwartz formula, the updated Schwarzt formula, the Filler formula and the CKiD formula. The study found the most effective estimation formula to be the updated Schwartz one.
 
@@ -320,7 +320,7 @@ from the Figure~\ref{equations}, it is clear that the updated Schwartz formula o
   \label{equations}
 \end{figure}
 
-In order to apply SBR, we must first assess the existence of a single dominant variable. This was clearly found to be the serum creatinine concentration. Other variables used to estimate the glomerular filtration rate are age and height, whose effect however is marginal, as the scatter plots in Figure \ref{recessive} reveal no strong statistical features. 
+In order to apply SBR, we must first assess the existence of a single dominant variable. This was clearly found to be the serum creatinine concentration. Other variables used to estimate the glomerular filtration rate are age and height, whose effect however is marginal, as the scatter plots in Figure \ref{recessive} reveal no strong statistical features.
 %
 \begin{figure}[ht]
   \centering
@@ -393,7 +393,7 @@ By definition, the index $\textit{G}$ increases with sharp changes in slope. The
 f_i = f\left(x_\mathrm{min} + (i-1)\frac{x_\mathrm{max}-x_\mathrm{min}}{N-1}\right), \text{ for } i = 1,\ \ldots,\ N,
 \end{equation}
 %
-where $x_\mathrm{min}$ and $x_\mathrm{max}$ are respectively the smallest and largest measured creatinine concentration levels. 
+where $x_\mathrm{min}$ and $x_\mathrm{max}$ are respectively the smallest and largest measured creatinine concentration levels.
 %namely
 %
 %\begin{equation}
@@ -408,10 +408,10 @@ The value of $G$ is expected to be large for irregular curves and indeed it is c
   \centering
   \begin{tabular}{|l|c|c|c|c|}
     \hline
-    \textbf{Model}             &$\mathit{G}$    &$\mathit{MSE}$  &$\mathit{MAE}$  &$R^2$    \\
+    \textbf{Model}             &$\mathit{G}$  &$\mathit{MSE}$  &$\mathit{MAE}$  &$R^2$    \\
     \hline
     Updated Schwartz           &$14.69$ &$863.92$  &$23.19$  &$ 0.1491$  \\
-    Simplified Schwartz        &$0.36$  &$1341.80$ &$27.84$  &{\bf\red$-0.3216$}  \\
+    Simplified Schwartz        &$0.36$  &$1341.80$ &$27.84$  &$-0.3216$  \\
     NANS SBR                   &$1.83$  &$696.62$  &$20.32$  &$ 0.3139$  \\
     Binning-less SBR           &$1.65$  &$674.90$  &$20.19$  &$ 0.3353$  \\
     \hline
@@ -420,7 +420,7 @@ The value of $G$ is expected to be large for irregular curves and indeed it is c
   \label{regstats}
 \end{table}
 
-%The Schwartz2009 model exhibits the lowest $R^2$ value. 
+%The Schwartz2009 model exhibits the lowest $R^2$ value.
 The Binning-less statistical bivariate regression algorithm exhibits the lowest $\textit{MSE}$ and $\textit{MAE}$ values, that shows that SBR is very effective at fitting data.
 %
 \section{Conclusions}\label{conclusion}
@@ -429,63 +429,63 @@ The aim of the present paper is to discuss the bivariate statistical regression 
 %
 \begin{thebibliography}{99}
   \bibitem{bestchak} M.J. Best and N. Chakravarti, ``Active set algorithms for isotonic regression; a unifying framework'', \textit{Mathematical Programming}, Vol. 47, pp 425 -- 439, 1990
- 
+
   \bibitem{bishop} C.M. Bishop, ``Training with noise is equivalent to Tikhonov regularization'', \textit{Neural Computation}, Vol. 7, No. 1, pp. 108 -- 116, 1995
-  
-\bibitem{Counahan} R. Counahan, C. Chantler, S. Ghazali, B. Kirkwood, F. Rose and T.M. Barratt, ``Estimation of glomerular filtration rate from plasma creatinine concentration in children'', \textit{Archives of Disease in Childhood},  Vol. 51, pp. 875 -- 878, 1976  
-  
+
+\bibitem{Counahan} R. Counahan, C. Chantler, S. Ghazali, B. Kirkwood, F. Rose and T.M. Barratt, ``Estimation of glomerular filtration rate from plasma creatinine concentration in children'', \textit{Archives of Disease in Childhood},  Vol. 51, pp. 875 -- 878, 1976
+
   \bibitem{mgfr2} Z.H. Endre, J.W. Pickering and R.J. Walker, ``Clearance and beyond: the complementary roles of GFR measurement and injury biomarkers in acute kidney injury (AKI)'', \textit{American Journal of Physiology -- Renal Physiology}, Vol. 301, No. 4, pp. F697 -- F707, 2011
-  
+
   \bibitem{fiori} S. Fiori, ``Fast statistical regression in presence of a dominant independent variable'', \textit{Neural Computing and Applications}, Vol. 22, No. 7, pp. 1367 -- 1378, 2013
-  
+
   \bibitem{fgl} S. Fiori, T. Gong and H.K. Lee, ``Bivariate nonisotonic statistical regression by a lookup table neural system'', \textit{Cognitive Computation}, Vol. 7, No. 6, pp. 715 -- 730, 2015
-  
+
   \bibitem{seismic} D. Gao, ``Texture model regression for effective feature discrimination: Application to seismic facies visualization and interpretation'', \textit{Geophysics}, Vol. 69, No. 4, pp. 958 -- 967, 2004
-  
+
   \bibitem{gfrmed} J. Gill, R. Malyuk, O. Djurdjev and A. Levin, ``Use of GFR equations to adjust drug doses in an elderly multi-ethnic group --- a cautionary tale'', \textit{Nephrology Dialysis Transplantation}, Vol. 22, No. 10, pp. 2894 -- 2899, 2007
-  
-  \bibitem{grubb} A. Grubb, S. Blirup-Jensen, V. Lindstrom, C. Schmidt, H. Althau and I. Zegers, ``First certified reference material for cystatin C in human serum ERM-DA471/IFCC'', \textit{Clinical Chemistry and Laboratory Medicine}, Vol. 48, No. 11, pp. 1619 -- 1621, 2010  
-  
+
+  \bibitem{grubb} A. Grubb, S. Blirup-Jensen, V. Lindstrom, C. Schmidt, H. Althau and I. Zegers, ``First certified reference material for cystatin C in human serum ERM-DA471/IFCC'', \textit{Clinical Chemistry and Laboratory Medicine}, Vol. 48, No. 11, pp. 1619 -- 1621, 2010
+
   \bibitem{book} F.E. Harrell, \textit{Regression modeling strategies: with applications to linear models, logistic and ordinal regression, and survival analysis}, Springer Series in Statistics, 2015
 
   \bibitem{fat} I. Janssen, P. T Katzmarzyk and R. Ross, ``Waist circumference and not body mass index explains obesity-related health risk', \textit{American Society for Clinical Nutrition}, Vol. 79, pp. 379 -- 384, 2004
 
   \bibitem{control} R.E. Kopp and R.J. Orford, ``Linear regression applied to system identification for adaptive control systems'', \textit{The American Institute of Aeronautics and Astronautics Journal}, Vol. 1, No. 10, pp. 2300 -- 2306, 1963
-  
+
  \bibitem{laskin} B.L. Laskin, E. Nehus, J. Goebel, J.C. Khoury, S.M. Davies and S. Jodele, ``Cystatin C-estimated glomerular filtration rate in pediatric autologous hematopoietic stem cell transplantation'', \textit{Biology of Blood and Marrow Transplantation}, Vol. 18, No. 11, pp. 1745 -- 1752, 2012
-  
+
   \bibitem{MDRD} A.S. Levey, J.P. Bosch, J.B. Lewis, T. Greene, N. Rogers and D. Roth, ``A more accurate method to estimate glomerular filtration rate from serum creatinine: a new prediction equation. Modification of Diet in Renal Disease Study Group'', \textit{Annals of Internal Medicine}, Vol. 130, pp. 461 -- 470, 1999
 
   \bibitem{ckdepi} A.S Levey, L.A. Stevens, C.H. Schmid, Y.L. Zhang, A.F. Castro III, H.I. Feldman, J.W. Kusek, P. Eggers, F. van Lente, T. Greene and J. Coresh, ``A new equation to estimate glomerular filtration rate'', \textit{Annals of Internal Medicine}, Vol. 150, No. 9, pp. 604 -- 612, 2009
-  
+
   \bibitem{pava} P. Mair, K. Hornik and J. de Leeuw, ``Isotone Optimization in R: Pool-Adjacent-Violators Algorithm (PAVA) and Active Set Methods``, \textit{Journal of Statistical Software}, Vol. 32, No. 5, pp. 1 -- 24, 2009
- 
+
   \bibitem{ts} E. Masry, ``Multivariate local polynomial regression for time series: uniform strong consistency and rates'', \textit{Journal of Time Series Analysis}, Vol. 17, pp. 571 -- 599, 1996
-  
+
   \bibitem{gfralb} K. Matsushita, M. van der Velde, B.C. Astor, M. Woodward, A.S. Levey, P.E. de Jong, J. Coresh and R.T. Gansevoort, ``Association of estimated glomerular filtration rate and albuminuria with all-cause and cardiovascular mortality in general population cohorts: a collaborative meta-analysis'', \textit{The Lancet}, Vol. 375, No. 9731, pp. 2073 -- 2081, 2010
-  
+
   \bibitem{strontium} J.M. McArthur, R.J. Howarth and T.R. Bailey, ``Strontium isotope stratigraphy: LOWESS version 3: Best fit to the marine Sr-isotope curve for 0-509 Ma and accompanying look-up table for deriving numerical age'', \textit{The Journal of Geology}, Vol. 109, No. 2, pp. 155 -- 170, 2001
-  
+
   \bibitem{mukaka} M.M. Mukaka, ``A guide to appropriate use of correlation coefficient in medical research'', \textit{Malawi Medical Journal}, Vol. 24, No. 3, pp. 69 -- 71, 2012
-  
-  \bibitem{rigalleau} V. Rigalleau, C. Lasseur, C. Raffaitin, C. Perlemoine, N. Barthe, P. Chauveau, C. Combe and H. Gin, ``The Mayo clinic quadratic equation improves the prediction of glomerular filtration rate in diabetic subjects'', \textit{Nephrology Dialysis Transplantation}, Vol. 22, No. 3, pp. 813 -- 818, 2007  
-  
+
+  \bibitem{rigalleau} V. Rigalleau, C. Lasseur, C. Raffaitin, C. Perlemoine, N. Barthe, P. Chauveau, C. Combe and H. Gin, ``The Mayo clinic quadratic equation improves the prediction of glomerular filtration rate in diabetic subjects'', \textit{Nephrology Dialysis Transplantation}, Vol. 22, No. 3, pp. 813 -- 818, 2007
+
   \bibitem{mayo} A.D. Rule, T.S. Larson, E.J. Bergstralh, J.M. Slezak, S.J. Jacobsen and F.G. Cosio, ``Using serum creatinine to estimate glomerular filtration rate: accuracy in good health and in chronic kidney disease'', \textit{Annals of Internal Medicine}, Vol. 141, No. 12, pp. 929 -- 937, 2004
 
   \bibitem{schwartz} G.J. Schwartz, A. Mu\~{n}oz, M.F. Schneider, R.H. Mak, F. Kaskel, B.A. Warady and S.L. Furth, ``New equations to estimate GFR in Children with CKD'', \textit{Journal of the American Society of Nephrology}, Vol. 20, No. 3, pp. 629 -– 637, 2009
-  
- \bibitem{schwartz3} G.J. Schwartz, M.F. Schneider, P.S. Maier, M. Moxey-Mims, V.R. Dharnidharka, B.A. Warady, S.L. Furth and A. Mu\~{n}oz, ``Improved equations estimating GFR in children with chronic kidney disease using an immunonephelometric determination of cystatin C'', \textit{Kidney International}, Vol. 82, No. 4, pp. 445 -- 453, 2012  
-  
+
+ \bibitem{schwartz3} G.J. Schwartz, M.F. Schneider, P.S. Maier, M. Moxey-Mims, V.R. Dharnidharka, B.A. Warady, S.L. Furth and A. Mu\~{n}oz, ``Improved equations estimating GFR in children with chronic kidney disease using an immunonephelometric determination of cystatin C'', \textit{Kidney International}, Vol. 82, No. 4, pp. 445 -- 453, 2012
+
   \bibitem{gold} M.A. Serdar, I. Kurt, F. Ozcelik, M. Urhan, S. Ilgan, M. Yenicesu, T. Kutluay, ``A practical approach to glomerular filtration rate measurements: creatinine clearance estimation using cimetidine'', \textit{Annals of Clinical \& Laboratory Science}, Vol. 31, No. 3, pp. 265 -- 273, 2001
-  
-\bibitem{simonsen} O. Simonsen A. Grubb and H. Thysell, ``The blood serum concentration of cystatin C (gamma-trace) as a measure of the glomerular filtration rate'', \textit{Scandinavian Journal of Clinical and Laboratory Investigation}, Vol. 45, No. 2, pp. 97 -- 101, 1985  
-  
+
+\bibitem{simonsen} O. Simonsen A. Grubb and H. Thysell, ``The blood serum concentration of cystatin C (gamma-trace) as a measure of the glomerular filtration rate'', \textit{Scandinavian Journal of Clinical and Laboratory Investigation}, Vol. 45, No. 2, pp. 97 -- 101, 1985
+
   \bibitem{jaffe} C. Slot, ``Plasma creatinine determination a new and specific Jaffe reaction method'', \textit{Scandinavian Journal of Clinical and Laboratory Investigation}, Vol. 17, No. 4, pp. 381 -- 387, 1965
-  
+
   \bibitem{mgfr} I. Soveri, U.B. Berg, J. Bj\"{o}rk, C.G. Elinder, A. Grubb, I. Mejare, G. Sterner and S.E. B\"{a}ck, ``Measuring GFR: A Systematic Review'', \textit{American Journal of Kidney Diseases}, Vol. 64, No. 3, pp. 411 -- 424, 2014
-  
+
   \bibitem{idms} M.J. Welch, A. Cohen, H.S. Hertz, K.J. Ng, R. Schaffer, P. van der Lijn, and E. White, ``Determination of serum creatinine by isotope dilution mass spectrometry as a candidate definitive method'', \textit{Analytical Chemistry}, Vol. 58, No. 8, pp. 1681 -- 1685, 1986
-  
+
   \bibitem{gfr} K. Zheng, M. Gong, Y. Qin, H. Song, X. Shi, Y. Wu, F. Li and X. Li, ``Validation of glomerular filtration rate-estimating equations in Chinese children'', \textit{PLoS ONE}, Vol. 12, No. 7, pp. e0180565 (\doi{10.1371/journal.pone.0180565}), 2017
   %
 \end{thebibliography}

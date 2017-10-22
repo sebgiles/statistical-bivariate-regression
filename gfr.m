@@ -24,7 +24,7 @@ function [] = gfr()
   h = colorbar;
   legend('female','male');
   xlabel('Creatinine measured by Jaffe Method [mg/dL]')
-  ylabel('mGFR [mL/min]')
+  ylabel('mGFR [mL/min/1.73m^2]')
   title(h, 'height [m]')
 
   subplot(2,1,2)
@@ -38,7 +38,7 @@ function [] = gfr()
   h = colorbar;
   legend('female','male');
   xlabel('Creatinine measured by IDMS Method [mg/dL]')
-  ylabel('mGFR [mL/min]')
+  ylabel('mGFR [mL/min/1.73m^2]')
   title(h, 'height [m]')
 
   disp('Press any key to continue')
@@ -88,7 +88,7 @@ function [] = gfr()
   legend('female','male');
   title('Influence of age on GFR')
   xlabel('Age [years]')
-  ylabel('Measured GFR [mL/min]')
+  ylabel('Measured GFR [mL/min/1.73m^2]')
   title(h,'sCr [mg/dL]')
 
   subplot(1,2,2)
@@ -103,7 +103,7 @@ function [] = gfr()
   legend('female','male');
   title('Influence of height on GFR')
   xlabel('Height [m]')
-  ylabel('Measured GFR [mL/min]')
+  ylabel('Measured GFR [mL/min/1.73m^2]')
   title(h,'sCr [mg/dL]')
 
   disp(' ')
@@ -132,7 +132,7 @@ function [] = gfr()
 
   xlabel('Creatinine [mg/dL]')
   ylabel('Height [m]')
-  zlabel('GFR [mL/min]')
+  zlabel('GFR [mL/min/1.73m^2]')
   pause
   close
 
@@ -182,7 +182,7 @@ function [] = gfr()
   legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
     'Schwartz2009');
   xlabel('Measured serum creatinine concentration (sCr) [mg/dL]')
-  ylabel('Measured and estimated GFR [mL/min]')
+  ylabel('Measured and estimated GFR [mL/min/1.73m^2]')
 
   pause
   close
@@ -210,7 +210,7 @@ function [] = gfr()
   QmGFR = linspace(min(T.mGFR), max(T.mGFR), R)';
   plot(QmGFR,cdf(T.mGFR, QmGFR));
   title('mGFR CDF')
-  xlabel('GFR [mL/min]')
+  xlabel('GFR [mL/min/1.73m^2]')
 
   disp(' worst relative error for mGFR data: ')
   invQmGFR = invcdf(T.mGFR, cdf(T.mGFR, QmGFR));
@@ -236,7 +236,7 @@ function [] = gfr()
   h = colorbar;
   legend('female','male');
   xlabel('Serum creatinine concentration (sCr) [mg/dL]')
-  ylabel('Measured and estimated GFR [mL/min]')
+  ylabel('Measured and estimated GFR [mL/min/1.73m^2]')
   title(h, 'height [m]')
 
   % compute curves
