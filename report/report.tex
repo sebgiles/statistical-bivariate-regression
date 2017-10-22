@@ -198,9 +198,10 @@ Here are a few comments about Algorithm \ref{invcdf_algo}:
   \item \textbf{Line 4}: The input probability is denormalised into the range $[0, n]$.
   \item \textbf{Lines 5--9}: The indexes $r$ and $l$ take the value of $p$ rounded to the next integer to be used as an index, which also requires $r$ and $l$ to be non-zero.
   \item \textbf{Lines 10--12}: The index $r$ is made to point to the last occurrence of the smallest value whose CDF is greater than the query probability.
-  \item \textbf{Lines 13--15, 20}: $l$ is made to point to the last occurrence of the greatest value whose CDF is less than the query probability.
-  \item \textbf{Lines 16--22}: Alignments are made to allow interpolation for small probabilities [{\bf\red Cosa sono questi allineamenti ? Spiegare meglio.}].
-  \item \textbf{Lines 20--21}: The inverse cumulative distribution function value $P^{-1}(l/n)$ is estimated by $D[l]$, whilst the inverse cumulative distribution function value $P^{-1}(r/n)$ is estimated by $D[r]$. Nearby values are obtained via linear interpolation.
+  \item \textbf{Lines 13--15, 20}: $l$ is made to point to the first occurrence of the same value.
+  \item \textbf{Line 23}: Normally $l$ is then made to point to the previous element which is the last occurrence of the greatest value whose CDF is less than the query probability.
+  \item \textbf{Lines 16--21}: If $l$ is already pointing to the first value of the array then $l$ takes the value of $r$ and $r$ is made to point to the last occurrence of the following value.
+  \item \textbf{Lines 25--26}: The inverse cumulative distribution function value $P^{-1}(l/n)$ is estimated by $D[l]$, whilst the inverse cumulative distribution function value $P^{-1}(r/n)$ is estimated by $D[r]$. Nearby values are obtained via linear interpolation.
 \end{itemize}
 %
 
