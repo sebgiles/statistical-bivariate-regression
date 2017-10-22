@@ -384,7 +384,7 @@ The reference values for a well-performing algorithm are $\textit{MSE}\geq 0$ an
 Comparisons were also made to evaluate the generalization ability of the closed-form models (updated Schwartz and simplified Schwartz) as well as of the considered numerical regression algorithms (SBR and NANS-SBR). This was achieved by measuring the ``roughness'' of the the regression curves through the index $G$ defined by
 %
 \begin{equation}
-G^2 = \sum_{i=3}^{N}{\frac{(f_i-2f_{i-1}+f_{i-2})^2}{N-2}},
+G = \sum_{i=3}^{N}{\frac{(f_i-2f_{i-1}+f_{i-2})^2}{N-2}},
 \end{equation}
 %
 on the basis of the second-order differences of a sequence $f_i$. In this context, the sequence $f_i$ denotes either the prediction of a closed-form model or the prediction of a regression algorithm.
