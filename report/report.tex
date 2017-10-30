@@ -400,7 +400,7 @@ on the basis of the second-order differences of a sequence $f_i$. By definition,
   f_i = f\left(x_\mathrm{min} + (i-1)\frac{x_\mathrm{max}-x_\mathrm{min}}{N-1}\right), \text{ for } i = 1,\ \ldots,\ N,
 \end{equation}
 %
-where $x_\mathrm{min}$ and $x_\mathrm{max}$ are respectively the smallest and largest measured creatinine concentration levels.
+where $x_\mathrm{min}$ and $x_\mathrm{max}$ are respectively the smallest and largest measured creatinine concentration levels. The same index cannot be applied to multivariate functions, therefore the updated Schwartz equation was not tested with this criterion.
 %namely
 %
 %\begin{equation}
@@ -408,7 +408,8 @@ where $x_\mathrm{min}$ and $x_\mathrm{max}$ are respectively the smallest and la
 %\end{equation}
 %
 An index similar to $\mathit{G}$ was discussed in \cite{bishop} to prevent overfitting of a neural-network model.
-The value of $G$ is expected to be large for irregular curves and indeed it is close to zero for the simplified Schwartz model (independent of height), which is essentially a hyperbola, graph of a smooth function, while it is very high for the original Schwartz model, as we are including the effect of a second independent variable (which does contribute to ordering the sequence $f_i$).
+The value of $G$ is expected to be large for irregular curves and indeed it is close to zero for the simplified Schwartz model (independent of height), which is essentially a hyperbola, graph of a smooth function.
+%while it is very high (14.69) for the original Schwartz model, as we are including the effect of a second independent variable (which does contribute to ordering the sequence $f_i$).
 %
 \begin{table}[ht]
   \centering
@@ -416,7 +417,7 @@ The value of $G$ is expected to be large for irregular curves and indeed it is c
     \hline
     \textbf{Model}             &$\mathit{G}$  &$\mathit{MSE}$  &$\mathit{MAE}$  &$R^2$    \\
     \hline
-    Updated Schwartz           &$14.69$ &$863.92$  &$23.19$  &$ 0.1491$  \\
+    Updated Schwartz           &$ - $ &$863.92$  &$23.19$  &$ 0.1491$  \\
     Simplified Schwartz        &$0.36$  &$1341.80$ &$27.84$  &$-0.3216$  \\
     NANS SBR                   &$1.83$  &$696.62$  &$20.32$  &$ 0.3139$  \\
     Binning-less SBR           &$1.65$  &$674.90$  &$20.19$  &$ 0.3353$  \\
