@@ -9,16 +9,15 @@
 %\usepackage{subcaption}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage[breakable]{tcolorbox}
+%\usepackage[breakable]{tcolorbox}
 \usepackage{doi}
 \usepackage{caption}%http://ctan.org/pkg/caption
 \captionsetup[table]{format=plain,labelformat=simple,labelsep=period}
-
 \usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
 
 %
 \begin{document}
-\title{Glomerular filtration rate estimation by a novel binning-less bivariate isotonic statistical regression method}
+\title{Glomerular filtration rate estimation by a novel binning-less isotonic statistical bivariate regression method}
 \author{Sebastian~Giles, Simone~Fiori%
 \thanks{S. Giles is with the School of Information and Automation Engineering,
 Universit\`{a} Politecnica delle Marche,
@@ -41,25 +40,25 @@ This draft is dated \today.}}
 %
 %
 \begin{abstract}
-  Bivariate statistical regression is a method for finding a relationship between unpaired sets of data based on statistic distribution matching. In the present report, an efficient numerical algorithm is proposed to perform bivariate regression. The method is then applied to correlate glomerular filtration rate to serum creatinine concentration. Glomerular filtration rate is an important indicator of kidney function. As direct measurement is highly impractical, there is considerable interest in developing numerical algorithms to estimate glomerular filtration rate from parameters which are easier to obtain, such as demographic data and `bedside' assays results.
+Statistical bivariate regression is a method for finding a relationship between unpaired sets of data based on statistic distribution matching. In the present paper, an efficient numerical algorithm is proposed to perform bivariate regression. The algorithm is then applied to correlate glomerular filtration rate to serum creatinine concentration. Glomerular filtration rate is an important indicator of kidney function. As direct measurement is highly impractical, there is considerable interest in developing numerical algorithms to estimate glomerular filtration rate from parameters which are easier to obtain, such as demographic and `bedside' assays data.
 \end{abstract}
 %
 \section{Introduction}\label{intro}
-Several real-world complex phenomena in vistually any branch of science lack accurate mathematical descriptions \cite{seismic,strontium}. In these cases, it is not possible to predict the value of a variable by plugging known quantities into an analytically derived expression, therefore, empirical methods must be employed to develop a model of the observed process. The most common set of tools used to infer a functional relationship between variables is regression analysis \cite{control, ts}.
+Several real-world complex phenomena in virtually any branch of science lack accurate mathematical descriptions (see, e.g., \cite{seismic,strontium} for examples related to geophysics and geology). In these cases, it is not possible to predict the value of a variable by an analytically derived expression, therefore, empirical methods must be employed to develop a model of the observed process. The most common set of tools used to infer a functional relationship between variables is regression analysis (see, e.g., \cite{control, ts}).
 
 %Here only bivariate regression techniques will be considered. The amount of available data is assumed to be enough to explain the relevant statistical features of the phenomenon underlying the data.
 
-The problem that triggered the present research is the estimation of glomerular filtration rate (GFR), which is used as an indicator of kidney function and is relevant for assessing progression of renal disease. It is also frequently required for evaluating optimal dosage for medications \cite{gfrmed,gfralb}. However, determination of true GFR is time-consuming, costly, and difficult to perform \cite{mgfr2,mgfr}. Thus, there is considerable interest in developing models to estimate GFR using simpler parameters such as age, weight, height, gender and values which can be more conveniently measured as part of a typical blood test.
+The problem that triggered the present research is the estimation of glomerular filtration rate (GFR), which is used in clinical nephrology as an indicator of kidney function and is relevant for assessing progression of renal disease. Glomerular filtration rate is also frequently required for evaluating optimal dosage for medications \cite{gfrmed,gfralb}. However, determination of true GFR is time-consuming, costly and difficult to perform \cite{mgfr2,mgfr}. Thus, there is considerable interest in developing models to estimate GFR using simpler parameters such as a patient's age, weight, height, gender and values which can be more conveniently measured as part of a standard blood test.
 
-Traditional forms of regression are based on some parametrised function whose graph is made to lay reasonably close to the points making up the experimental dataset. Values for the parameters are typically found using the least squares method \cite{book}.
+Traditional forms of regression are based on some parametrised function whose graph is made to lay reasonably close to the points making up the experimental dataset. Values for the parameters are typically calculated using the least squares method \cite{book}.
 
-Isotonic regression allows greater freedom for the regression curve to fit data by constructing a piecewise linear function, described by a lookup table (LUT). Overfitting is avoided by requiring the function to be monotonic, which is reasonable whenever the underlying physical phenomenon is inherently monotonic (such as the relationship between percentage body fat and waist circumference \cite{fat}). Various algorithms can be used to find the LUT values that satisfy a least squares condition \cite{bestchak, pava}.
+Isotonic regression allows greater freedom for the regression curve to fit data by constructing a piecewise linear function, described by a lookup table (LUT). Overfitting is avoided by requiring the function to be isotonic, which is reasonable whenever the underlying physical phenomenon is inherently monotonic (such as the relationship between percentage body fat and waist circumference \cite{fat}). Various algorithms can be used to find the LUT values-entries that satisfy a least squares condition \cite{bestchak, pava}.
 
-Statistical bivariate regression (SBR) constitutes an improvement over isotonic regression. Its advantages derive from the fact that it relies on finding the relationship between the statistical distributions of the variables. SBR is not based on a least squares method so it does not require data to be associated in ordered pairs. This makes it ideal for correlating two quantities that cannot be both measured on the same individual. The algorithm presented in \cite{fiori} independently estimates the probability density functions (PDF) of the two variables by dividing the dataset ranges into bins and populating look-up tables (LUTs) for the relative frequencies. The PDFs are then integrated to obtain the cumulative distribution functions (CDF) which are, or can be licitly adjusted to be, bijective and allow for the regression model to be obtained as the map between values with equal probabilities.
+Statistical bivariate regression (SBR) provides an improvement over isotonic regression. Its advantages derive from the fact that it relies on finding the relationship between the statistical distributions of the variables. SBR is not based on a least squares method, therefore, it does not require data to be associated in ordered pairs. This makes it ideal for correlating two quantities that cannot be both measured on the same individual. The algorithm presented in \cite{fiori} independently estimates the probability density functions (PDF) of the two variables by dividing the dataset ranges into bins and populating look-up tables for the relative frequencies. The PDFs are then integrated numerically to obtain the cumulative distribution functions (CDF) which are, or can be licitly adjusted to be, bijective and allow for the regression model to be obtained as the map between values with equal probabilities.
 
-This report describes an alternative algorithm developed to make bivariate statistical regression more versatile and faster over large datasets by entirely avoiding the binning (previously required to estimated PDFs) and numerical integration operations (previously required to estimated a CDF from a PDF that it is associated to).
+This report describes an alternative algorithm developed to make statistical bivariate regression more versatile and faster over large datasets by entirely avoiding the binning (previously required to estimated PDFs) and numerical integration operations (previously required to estimated a CDF from a PDF that it is associated to).
 
-The present report is organized as follows. Section \ref{blsbr} recalls the notion of bivariate statistical regression and explains the main idea and the details about the proposed binning-less bivariate statistical regression algorithm. Section \ref{gfr} explains an analysis of the glomerular-filtration-rate (GFR) estimation based on creatinine levels and illustrates such analysis by means of numerical tests performed on a dataset drawn from a study on pediatric patients in mainland China. Section \ref{conclusion} concludes the paper.
+The present paper is organized as follows. Section \ref{blsbr} recalls the notion of bivariate statistical regression and explains the main idea and the details about the proposed binning-less bivariate statistical regression algorithm. Section \ref{gfr} explains an analysis of the glomerular-filtration-rate (GFR) estimation based on creatinine levels and illustrates such analysis by means of numerical tests performed on a dataset drawn from a study on pediatric patients in mainland China. Section \ref{conclusion} concludes the paper.
 %
 \section{Binning-less statistical bivariate regression algorithm}\label{blsbr}
 %
@@ -93,8 +92,8 @@ The proposed SBR regression procedure can be separated into two parts: the evalu
 \end{algorithm}
 %
 
-We developed a binningless procedure to estimate the value of the CDF $P(q)$ of a generic random variable $Q$ for which $n$ realizations are stored as the components of an array $D$.
-The main idea to avoid binning is to estimate the cumulative distribution function of a dataset without resorting to an estimate of the probability density function first. This can be done by embracing the definition of CDF itself, which leads us to counting the number of realizations that are less than or equal to $q$ and dividing by $n$. The solution shown in Algorithm \ref{cdf_algo} expands this idea to allow for a continuous, strictly monotonic interpolation for values which are not included in the original dataset. (Array indexing is 1-based and symbol $\land$ denotes logical conjunction.)
+We developed a binning-less procedure to estimate the value of the CDF $P(q)$ of a generic random variable $Q$ for which $n$ realizations are stored as the components of an array $D$.
+The main idea to avoid binning is to estimate the cumulative distribution function of a dataset without resorting to an estimate of the probability density function first. This can be done by embracing the definition of CDF itself, which leads us to counting the number of realizations whose values are smaller than (or equal to) $q$ and dividing this count by $n$. The solution shown in Algorithm \ref{cdf_algo} expands this idea to allow for a continuous, strictly monotonic interpolation for values that are not included in the original dataset. (Array indexing is 1-based and symbol $\land$ denotes logical conjunction.)
 
 \begin{algorithm}
   \caption{Cumulative distribution function estimation}
@@ -127,8 +126,7 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
     \State $d \gets (q-D[l])/(D[r]-D[l])$
     \State $P \gets (l + d \cdot (r - l))/n $
 
-    % trim out of range interpolations
-    \If {$P<0$}
+    \If {$P<0$} \Comment Trimming out of range interpolations
     \State {$P\gets0$}
     \ElsIf {$P>1$}
     \State {$P\gets1$}
@@ -142,16 +140,16 @@ The main idea to avoid binning is to estimate the cumulative distribution functi
 Here are a few comments about Algorithm \ref{cdf_algo}:
 \begin{itemize}
   \item \textbf{Line 2}: The algorithm is notably simplified by sorting the entries of $D$ in ascending order.
-  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in array $D$. The loop starts with indexes $l$ and $r$ as the borders of $D$ and ends with $l$ as the index of the last value less than $q$, and $r$ as that of the first value greater than $q$. The only exception that may occur is handled in lines 14--16.
+  \item \textbf{Lines 4--13}: This part is essentially a binary search for $q$ in array $D$. The loop starts with indexes $l$ and $r$ as the endpoints of $D$ and ends with $l$ as the index of the last value less than $q$, and $r$ as that of the first value greater than $q$. The only exception that may occur is handled in lines 14--16.
   \item \textbf{Line 8}: Making sure that $D[m]\neq D[l]$ is needed to prevent $l$ and $r$ from converging to $1$ and $2$ respectively, in the case that $q$ is smaller than all elements in $D$.
   \item \textbf{Lines 14--16}: This loop is needed to fix $l$ in the case that it converges to $n-1$ as a consequence of $q$ being greater than all values in $D$.
-  \item \textbf{Lines 17--19}: The previous operations already guarantee that $l$ is the last index for the value $D[l]$, which means that there are $l$ elements in $D$ which are less than or equal to $D[l]$. This loop finds $r$, the count of elements that are smaller than (or equal to) the value $D[r]$.
+  \item \textbf{Lines 17--19}: The previous operations already guarantee that $l$ is the last index for the value $D[l]$, which means that there are $l$ elements in $D$ which are less than or equal to $D[l]$. This loop finds $r$, the count of elements whose values are smaller than (or equal to) the value $D[r]$.
   \item \textbf{Lines 20--21}: The probability $P(D[l])$ is estimated by the ratio $l/n$, whilst the probability $P(D[r])$ is estimated by the ratio $r/n$. The sought probability $P(q)$ is obtained via linear interpolation of the two.
   \item \textbf{Lines 22--26}: These checks fix the CDF for values of the query point $q$ that lay outside the range of $D$.
 \end{itemize}
 %
 
-The evaluation of the inverse CDF is based on the same principle applied in a reverse fashion: the input argument is a probability, it is multiplied by the cardinality $n$ of the dataset $D$ and rounded to an integer $r$. If the dataset $D$ is sorted, then there will be $r$ values less than or equal to $D[r]$. The Algorithm \ref{invcdf_algo} again allows for a continuous, strictly monotonic interpolation to yield values which are not included in the original dataset.
+The evaluation of the inverse CDF is based on the same principle applied in a reverse fashion: the input argument is a probability, it is multiplied by the cardinality $n$ of the dataset $D$ and rounded to an integer $r$. If the dataset $D$ is sorted, then there will be $r$ values less than or equal to $D[r]$. The Algorithm \ref{invcdf_algo} again allows for a continuous, strictly monotonic interpolation to yield values that are not included in the original dataset.
 
 \begin{algorithm}
   \caption{Inverse cumulative distribution function estimation}
@@ -197,7 +195,7 @@ The evaluation of the inverse CDF is based on the same principle applied in a re
 Here are a few comments about Algorithm \ref{invcdf_algo}:
 \begin{itemize}
   \item \textbf{Line 2}: The algorithm is notably simplified by sorting $D$ in ascending order.
-  \item \textbf{Line 4}: The input probability is denormalised into the range $[0, n]$.
+  \item \textbf{Line 4}: The input probability is denormalized into the range $[0, n]$.
   \item \textbf{Lines 5--9}: The indexes $r$ and $l$ take the value of $p$ rounded to the next integer to be used as an index, which also requires $r$ and $l$ to be non-zero.
   \item \textbf{Lines 10--12}: The index $r$ is made to point to the last occurrence of the smallest value whose CDF is greater than the query probability.
   \item \textbf{Lines 13--15, 20}: $l$ is made to point to the first occurrence of the same value.
@@ -207,7 +205,9 @@ Here are a few comments about Algorithm \ref{invcdf_algo}:
 \end{itemize}
 %
 
-Ideally, it should hold that \textsc{invCdf}(\textsc{cdf}$(q))=q$. To verify this identity we ran a numerical test on the Algorithms \ref{cdf_algo} and \ref{invcdf_algo} using the real-world dataset analyzed in Section~\ref{gfr}. For each element $q$ in the array, we calculated the relative deviation from identity
+MATLAB codes to implement the three functions described in the present section are reported in the Appendix~\ref{appa}, along with some comments on their computational burden.
+
+Ideally, it should hold that \textsc{invCdf}(\textsc{cdf}$(q))=q$. To verify this identity, we ran a numerical test on the Algorithms \ref{cdf_algo} and \ref{invcdf_algo} using the real-world dataset analyzed in Section~\ref{gfr}. For each element $q$ in the array, we calculated the relative deviation from identity
 %
 \begin{equation}
   \delta = \left|\frac{\ensuremath{\textsc{invCdf}(\textsc{cdf}}(q)) - q}{q}\right|.
@@ -223,7 +223,7 @@ The largest value of $\delta$ was found to be in the order of $10^{-15}$, which 
 %  ]
 %  \underline{\textsc{Numerical example}}:
 
-To end this section of the paper, let us consider a minimal working numerical example. Let $D_X=[2,3,5,5,6,6,7,9]$ and $D_Y=[6,7,10,10,11,11,11,12,15,20]$, i.e., $n=8$, $m=10$. The actual underlying model is $f(x)=2x+2$. Note that the data are not paired. Both arrays are already sorted for simplicity. Let the query point be $x_q=4$: we expect the result of statistical regression (Algorithm~1) to be $y_q\approx10$. The proposed procedure prescribes first to estimate the probability $P_X(4)$: the Algorithm~2 will find $l=2$ and $r=4$. The Algorithm~2 then will compute the linear interpolation:
+To conclude this section of the paper, let us consider a minimal working numerical example. Let $D_X=[2,3,5,5,6,6,7,9]$ and $D_Y=[6,7,10,10,11,11,11,12,15,20]$, i.e., $n=8$, $m=10$. The actual underlying model is $f(x)=2x+2$. Note that the data are not paired. Both arrays are already sorted for simplicity. Let the query point be $x_q=4$: we expect the result of statistical regression (Algorithm~1) to be $y_q\approx10$. The proposed procedure prescribes first to estimate the probability $P_X(4)$: the Algorithm~2 will find $l=2$ and $r=4$. The Algorithm~2 then will compute the linear interpolation:
 %
 \begin{equation*}
   d = \tfrac{x_q-X[l]}{X[r]-X[l]} = \tfrac{4-3}{5-3} = 0.5 \quad\Rightarrow\quad
@@ -241,37 +241,39 @@ The proposed procedure prescribes next to estimate the inverse probability $P^{-
 %
 \section{Application to glomerular filtration rate estimation}\label{gfr}
 %
-Chronic kidney disease is a recognized public health problem. Chronic kidney disease is classified into stages according to the level of GFR, and stage-specific action plans facilitate the evaluation and the management of chronic kidney disease. Kidney damage is usually ascertained from biochemical markers. Glomerular filtration rate can be estimated by means of empirical formulas that incorporate blood serum creatinine concentration, of blood serum cystatin-C concentration and demographic and clinical variables such as age, gender, race, and body size. GFR estimating formulas provide a more accurate assessment of the level of kidney function than biomarkers concentrations alone. %National and international organizations recommend that clinical laboratories report estimated GFR and that clinicians use GFR estimates to evaluate kidney function.
+Chronic kidney disease is a recognized public health problem. Chronic kidney disease is classified into stages according to the level of glomerular filtration rate, and stage-specific action plans facilitate the evaluation and the management of chronic kidney disease. 
+%Kidney damage is usually ascertained from biochemical markers. 
+Glomerular filtration rate can be estimated by means of empirical formulas that incorporate blood serum creatinine concentration, blood serum cystatin-C concentration as well as demographic and clinical variables such as age, gender, race, and body size. Glomerular filtration rate estimating formulas provide a more accurate assessment of the level of kidney function than biomarkers concentrations alone. %National and international organizations recommend that clinical laboratories report estimated GFR and that clinicians use GFR estimates to evaluate kidney function.
 
-Measuring the glomerular filtration rate is crucial for determining appropriate drug dosing, monitoring the effects of therapeutic interventions, and following the progression of chronic kidney disease. In pediatric autologous hematopoietic stem cell transplantation treatment protocols, chemotherapy dosing is commonly based on renal function, as patients with a reduced GFR levels receive reduced dosages, which can affect toxicity profiles and therapeutic benefit \cite{laskin}.
+Measuring the glomerular filtration rate is crucial for determining appropriate drug dosing, monitoring the effects of therapeutic interventions, and following the progression of chronic kidney disease. For instance, in pediatric autologous hematopoietic stem cell transplantation treatment protocols, chemotherapy dosing is commonly based on renal function, as patients with a reduced GFR levels receive reduced dosages, which can affect toxicity profiles and therapeutic benefit \cite{laskin}.
 %
 \subsection{Acronyms, formulas and references}
 %
-The two values of serum creatinine concentration may be measured by two different tecniques: the Jaffe  method \cite{jaffe} and the isotope dilution mass spectrometry (IDMS) enzymatic method \cite{idms}. Commonly used formulas based on blood serum creatinine concentration levels and demographic--physical variables are:
+Commonly used formulas to estimate the GFR are based on blood serum creatinine concentration levels and on demographic/clinical data. The level of serum creatinine concentration may be measured by two different tecniques: the Jaffe  method \cite{jaffe} and the isotope dilution mass spectrometry (IDMS) enzymatic method \cite{idms}. The most frequently used formulas to estimate GFR are
 %
 \begin{itemize}
-  \item \textbf{MDRD Study formula}: Modification of Diet in Renal Disease. It is used only for chronic kidney disease, as it was found to be inaccurate for acute renal failure. MDRD may underestimate the actual glomerular filtration rate in healthy patients \cite{MDRD,mayo}. The performance of the Modification of Diet in Renal Disease Study formula varies substantially among populations, because of differences among studies in the range of GFR, methods for GFR measurement, and among methods for creatinine assays in blood plasma. The MDRD 4-variable formula reads
+  \item \textbf{MDRD Study formula}: Modification of Diet in Renal Disease. It is used only for chronic kidney disease, as it was found to be inaccurate for acute renal failure. MDRD may underestimate the actual glomerular filtration rate in healthy patients \cite{MDRD,mayo}. The performance of the Modification of Diet in Renal Disease Study formula varies substantially among populations, because of differences among studies in the range of GFR, methods for GFR measurement, and methods for creatinine assays in blood plasma. The MDRD 4-variable formula reads
   %
   \begin{equation}
-    \mathit{GFR} = 186 \cdot sCr^{-1.154}\cdot Age^{-0.203} \cdot [1.2010 \text{ if Black}] \cdot [0.742 \text{ if Female}].
+    \mathit{GFR} = 186 \cdot sCr^{-1.154}\cdot age^{-0.203} \cdot [1.2010 \text{ if Black}] \cdot [0.742 \text{ if Female}].
   \end{equation}
   %
 
-  \item \textbf{CKD-EPI}: Chronic Kidney Disease Epidemiology Collaboration. The CKD-EPI formula is based on the same four variables as the MDRD Study formula, but it resulted from a different technique to model the relationship between estimated GFR and blood serum creatinine concentration, as well as a different relationship for age, gender and race. This formula was reported to perform better and with less bias than the MDRD Study formula, especially in patients with higher GFR. This results in reduced misclassification of chronic kidney disease \cite{ckdepi}. The CKD-EPI formula reads
+  \item \textbf{CKD-EPI}: Chronic Kidney Disease Epidemiology Collaboration. The CKD-EPI formula is based on the same four variables as the MDRD Study formula, but it resulted from a different technique to model the relationship between estimated GFR and blood serum creatinine concentration, age, gender and race. This formula was reported to perform better and with less bias than the MDRD Study formula, especially in patients with higher GFR. This results in reduced misclassification of chronic kidney disease \cite{ckdepi}. The CKD-EPI formula reads
   %
   \begin{equation}
-    \mathit{GFR} =141 \cdot \min\left(\tfrac{sCr}{k},1\right)^a\cdot \max\left(\tfrac{sCr}{k},1\right)^{-1.209}\cdot0.993^{Age}\cdot [1.018 \text{ if Female}] \cdot [1.159 \text{ if Black}],
+    \mathit{GFR} =141 \cdot \min\left(\tfrac{sCr}{k},1\right)^a\cdot \max\left(\tfrac{sCr}{k},1\right)^{-1.209}\cdot0.993^{age} \cdot [1.159 \text{ if Black}] \cdot [1.018 \text{ if Female}],
   \end{equation}
   %
-  where $k$ is $0.7$ for females and $0.9$ for males, while $a$ is $−0.329$ for females and $−0.411$ for males.
+  where the constant $k$ equals $0.7$ for females and $0.9$ for males, while the constant $a$ equals $−0.329$ for females and $−0.411$ for males.
 
   \item \textbf{Mayo Quadratic formula}: The Mayo Clinic Quadratic equation attempts to estimate GFR from variables including serum creatinine concentration, age and gender. This formula appears to have better performance characteristics when used in patients with preserved renal function \cite{rigalleau,mayo}. The Mayo Quadratic formula reads
   %
   \begin{equation}
-    \textit{GFR} = \exp\left(1.911+\frac{5.249}{sCr}-\frac{2.114}{sCr^2}-0.00686\cdot Age - [0.205 \text{ if Female}]\right).
+    \textit{GFR} = \exp\left(1.911+\frac{5.249}{sCr}-\frac{2.114}{sCr^2}-0.00686\cdot age - [0.205 \text{ if Female}]\right).
   \end{equation}
   %
-  If $sCr$ is less than $0.8$ mg/dL, it is recommended to use $0.8$ mg/dL for $sCr$.
+  If the $sCr$ level is less than $0.8$ mg/dL, it is recommended to use the value $0.8$ mg/dL for $sCr$.
 
   \item \textbf{Schwartz2009}: Updated Schwartz formula, also referred to as bedside Schwartz formula. It is one of several formulas to estimate GFR in pediatric patients, like the Counahan-Barratt formula based on blood serum creatinine concentration \cite{Counahan}, and the Grubb formula based on blood serum cystatin-C concentration \cite{simonsen}. In most cases, the bedside Schwartz formula allows rapid and reasonably accurate estimation of GFR for clinical use in children with chronic kidney disease. The updated Schwartz formula reads
   %
@@ -279,21 +281,21 @@ The two values of serum creatinine concentration may be measured by two differen
     \mathit{GFR} = 41.3 \cdot \frac{height}{sCr},
   \end{equation}
   %
-  where the serum creatinine concentration refers specifically to the values measured by the IDMS enzymatic method. The updated Schwarz formula is a standardized version of the original Schwartz formula $\mathit{GFR} = k \cdot \tfrac{height}{sCr}$, where the serum creatinine concentration refers specifically to the values measured by the Jaffe method, and the constant $k$ depends on muscle mass, which varies with a child's age, and ranges in $33-55$.
+  where the serum creatinine concentration refers specifically to the values measured by the IDMS enzymatic method. The updated Schwarz formula is a standardized version of the original Schwartz formula $\mathit{GFR} = \sigma \cdot \tfrac{height}{sCr}$, where the serum creatinine concentration refers specifically to the values measured by the Jaffe method, and the constant $\sigma$ depends on muscle mass, which varies with a child's age, and ranges in $33-55$.
 \end{itemize}
 
-In the above formulas, measurement units of the GFR and the sCr values are mL/min/1.73m$^2$ and mg/dL respectively, while patients height is expressed in meters and patients age is expressed in years. % this will hold throughout this report.
+In the above formulas and throughout this paper, measurement units of the \emph{GFR} and the \emph{sCr} values are mL/min/1.73m$^2$ and mg/dL respectively, while patients \emph{height} is expressed in meters and patients \emph{age} is expressed in years. 
 
-When measurement and calibration is more broadly available, glomerular filtration rate estimates using cystatin C may also exhibit broad clinical utility. Commonly used formulas based on blood serum cystatin C concentration levels and demographic variables are:
+When measurement and calibration is more broadly available, glomerular filtration rate estimates using cystatin C may also exhibit broad clinical utility. Commonly used formulas based on blood serum cystatin C concentration levels and demographic/clinical variables are:
 
 \begin{itemize}
-  \item \textbf{CKiD}: Chronic Kidney Disease in Children. A primary goal of the CKiD study was to develop a formula to estimate GFR using demographic variables and endogenous biochemical markers of renal function. The CLiD formula combines values of blood serum concentration of cystatin C (cysC), blood serum creatinine concentration and blood urea nitrogen concentration (BUN). The formula reads
+  \item \textbf{CKiD}: Chronic Kidney Disease in Children. A primary goal of the CKiD study was to develop a formula to estimate GFR using demographic variables and endogenous biochemical markers of renal function. The CKiD formula combines values of blood serum concentration of cystatin C (cysC), blood serum creatinine concentration and blood urea nitrogen concentration (BUN). The formula reads
   %
   \begin{equation}
     \mathit{GFR} = 39.8 \cdot \left(\frac{heigth}{sCr}\right)^{0.456} \cdot \left(\frac{1.8}{cysC}\right)^{0.418} \cdot \left(\frac{30}{\textit{BUN}}\right)^{0.079} \cdot \left(\frac{heigth}{1.4}\right)^{0.179}\cdot [1.076 \text{ if Male}].
   \end{equation}
   %
-  It may be useful as a confirmatory test in specific circumstances when estimation of GFR based on serum creatinine is less accurate, or when the clinical scenario summons a secondary test\cite{grubb,schwartz3}.
+  It may be useful as a confirmatory test in specific circumstances when estimation of GFR based on serum creatinine is less accurate, or when the clinical scenario calls for a second test\cite{grubb,schwartz3}.
 
   \item \textbf{Filler formula}: The empirical Filler formula to estimate the glomerular filtration rate reads
   %
@@ -305,16 +307,15 @@ When measurement and calibration is more broadly available, glomerular filtratio
 \end{itemize}
 %
 
-In the above formulas, the measurement unit of the cysC values is mg/L, while the measurement unit of the BUN values is mg/dL. The level of cystatin C is measured through a particle-enhanced nephelometric assay, while urea is measured by an automated biochemical analyzer.
+In the above formulas, the measurement unit of the cysC values is mg/L, while the measurement unit of the BUN values is mg/dL. The level of cystatin C is measured through a particle-enhanced nephelometric assay.
 %
 \subsection{Experimental results on statistical regression}
 %
 Existing multivariate formulas for GFR estimation have been compared and validated in \cite{gfr} over a dataset of 87 Chinese children and adolescents aged 1 through 18. The authors of the research have included their dataset with the publication. For each patient, the available data comprise age, gender, physical parameters (such as height and weight), GFR (measured using double-sample plasma clearance \cite{gold}), two values for serum creatinine concentration as well as cystatine-C and blood urea nitrogen concentration. The two values of serum creatinine concentration correspond to two different measurement techniques, namely, the Jaffe method and the IDMS enzymatic method.
 
-The study \cite{gfr} compared four different formulas on the Chinese-children dataset, namely the original Schwartz formula, the updated Schwartz formula, the Filler formula and the CKiD formula. The study found the most effective estimation formula to be the updated Schwartz one.
+The study \cite{gfr} compared four different formulas, namely, the original Schwartz formula, the updated Schwartz formula, the Filler formula and the CKiD formula. The study found the most effective estimation formula to be the updated Schwartz one.
 
-Over said data, we also computed estimations using the other three widely employed formulas, namely MDRD, CKD-EPI and Mayo Quadratic, and compared them with the results of the updated Schwartz estimation formula.
-from the Figure~\ref{equations}, it is clear that the updated Schwartz formula outperforms all of the other functions.
+Over said data, we also computed estimations using the other three widely employed formulas, namely MDRD, CKD-EPI and Mayo Quadratic, and compared them with the results of the updated Schwartz estimation formula. From the Figure~\ref{equations}, it is clear that the updated Schwartz formula outperforms all of the other functions.
 %
 \begin{figure}[ht]
   \centering
@@ -323,23 +324,23 @@ from the Figure~\ref{equations}, it is clear that the updated Schwartz formula o
   \label{equations}
 \end{figure}
 
-In order to apply SBR, we must first assess the existence of a single dominant variable. This was clearly found to be the serum creatinine concentration. Other variables used to estimate the glomerular filtration rate are age and height, whose effect however is marginal, as the scatter plots in Figure \ref{recessive} reveal no strong statistical features.
+In order to apply the statistical bivariate regression algorithm, we first assessed the existence of a single dominant variable. This was clearly found to be the serum creatinine concentration. Other variables used to estimate the glomerular filtration rate are age and height, whose effect however is marginal, as the scatter plots in Figure \ref{recessive} reveal no strong statistical features.
 %
 \begin{figure}[ht]
   \centering
   \makebox[\textwidth][c]{\includegraphics[scale=0.6]{figures/recessive}}
-  \caption{Plots of the glomerular filtration rate versus patients age or height suggest weak correlation. The serum creatinine concentration refers to the IMDS-traceable values.}
+  \caption{Scatter plots of the glomerular filtration rate versus patients age or height suggest weak correlation. Serum creatinine concentration refers to the IMDS-traceable values.}
   \label{recessive}
 \end{figure}
 %
-Quantitatively, this analysis is confirmed by the population correlation coefficient \cite{mukaka}, which, for a generic paired dataset $(z_i, y_i)$ for $i = 1, 2, \ldots, n$ is calculated as
+Quantitatively, this analysis is confirmed by the sample correlation coefficient \cite{mukaka}, which, for a generic paired dataset $(z_i, y_i)$ for $i = 1, 2, \ldots, n$ is calculated as
 %
 \begin{equation}
   \rho_{y,z} = \frac{\sum_{i = 1}^n{(z_i-\bar{z})(y_i-\bar{y})}}
   {\sqrt{\sum_{i=1}^n{(z_i-\bar{z})^2}\sum_{i=1}^n{(y_i-\bar{y})^2}}},
 \end{equation}
 %
-where $\bar{z}=\tfrac{1}{n}\sum_{i=1}^nz_i$ and $\bar{y}=\tfrac{1}{n}\sum_{i=1}^ny_i$. The coefficient of correlation $\rho$ takes values in the interval $[-1,1]$. If variables are directly correlated, then we expect the coefficient to approach $+1$ while, if they are inversely correlated, we expect a value of the coefficient of correlation close to $-1$. Unrelated variables yield a value of $\rho$ close to $0$. Table \ref{corr} shows correlation coefficients between the GFR and each of age, height and sCr for the whole population and the gender-defined subsets.
+where $\bar{z}=\tfrac{1}{n}\sum_{i=1}^nz_i$ and $\bar{y}=\tfrac{1}{n}\sum_{i=1}^ny_i$. The coefficient of correlation $\rho$ takes values in the interval $[-1,1]$. If variables are directly correlated, then we expect the coefficient to approach $+1$ while, if variables are inversely correlated, we expect a value of the coefficient of correlation close to $-1$. Unrelated variables yield a value of $\rho$ close to $0$. Table \ref{corr} shows correlation coefficients between the GFR and each of age, height and sCr for the whole population and the gender-defined subsets.
 %
 \begin{table}[ht]
   \centering
@@ -354,7 +355,7 @@ where $\bar{z}=\tfrac{1}{n}\sum_{i=1}^nz_i$ and $\bar{y}=\tfrac{1}{n}\sum_{i=1}^
     \textrm{Both}      & $-0.6744$ & $-0.0565$ & $-0.0425$  \\
     \hline
   \end{tabular}
-  \caption{Population correlation coefficients between glomerular filtration rate and age, height and creatinine concentration in patients blood plasma. The serum creatinine concentration refers to the IMDS-traceable values.}
+  \caption{Sample correlation coefficients between glomerular filtration rate and age, height and creatinine concentration levels. Serum creatinine concentration refers to the IMDS-traceable values.}
   \label{corr}
 \end{table}
 %
@@ -362,21 +363,21 @@ The results illustrated in the table confirm the weak statistical correlation be
 
 From the Figure~\ref{equations}, it is readily appreciated that the GFR--sCr relationship presents a monotonically decreasing trend, which enables us to apply the SBR regression algorithm presented in the Section~\ref{blsbr}. According to the observations drawn about the performances of the closed-form models, we did not compare the SBR regression algorithm with the MDRD, the CKD-EPI and the Mayo Quadratic formulas.
 
-As SBR generates a bivariate regression, for the sake of the comparison, a simplified version of the updated Schwartz formula was introduced to be independent of height. This was done by replacing the variable with a constant equal to the mean height of all individuals in the dataset. This model is illustrated in the Figure \ref{regression}, along with the datapoints, the regression curve obtained by SBR using the numerical-algebraic neural system (NANS) method explained in \cite{fiori}, the original updated Schwartz formula and the regression curve obtained using the binning-less method described in Section 2.
+As SBR generates a bivariate regression curve, for the sake of the comparison, a simplified version of the updated Schwartz formula was introduced to be independent of height. This was done by replacing the variable height with a constant equal to the mean height of all individuals in the dataset. This model is illustrated in the Figure \ref{regression}, along with the datapoints, the regression curve obtained by SBR using the numerical-algebraic neural system (NANS) method explained in \cite{fiori}, the original updated Schwartz formula and the regression curve obtained using the binning-less method described in Section~\ref{blsbr}.
 %
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=0.6]{figures/regression}
-  \caption{Data set with overlaid regression and estimation curves. Comparison of the updated Schwartz equation, the simplified Schwartz equation, the Numerical-Algebraic Neural System (NANS) method introduced in \cite{fiori} and the proposed method. The serum creatinine concentration refers to the IDMS-traceable values.}
+  \caption{Data set with overlaid regression and estimation curves. Comparison of the updated Schwartz equation, the simplified Schwartz equation, the Numerical-Algebraic Neural System (NANS) method introduced in \cite{fiori} and the proposed method. Serum creatinine concentration refers to the IDMS-traceable values.}
   \label{regression}
 \end{figure}
 
-The input-output nature of prediction making systems grants the use of functional notation (e.g. given a value for the independent variable $x$, the prediction made for the value of the dependent variable $y$ can be expressed as $y = f(x)$).
+The input-output nature of bivariate regression grants the use of functional notation (i.e., given a value for the independent variable $x$, the prediction made for the value of the dependent variable $y$ can be expressed as $y = f(x)$).
 %(e.g. $y = f(x)$, where $x$ is the known independent variable and $y$ is the dependent variable being predicted)
-The notation is commonly used in reference to closed-form models and will be adopted in this paper to also indicate predictions made using Algorithm \ref{regression_algo} or by interpolating the curve obtained using the NANS method.
+The notation is commonly used in reference to closed-form models and will be adopted in this paper to also indicate predictions made using the Algorithm \ref{regression_algo} and by interpolating the curve obtained using the NANS method.
 
-The two closed-form models and the two numerical regression algorithms displayed in the Figure \ref{regression} were compared on prediction performance using three indices: mean squared error (MSE), mean absolute error (MAE) and coefficient of determination ($R^2$).
-For a generic prediction making system, represented by the function $f(x)$, being validated over the set of datapoints $\lbrace(x_1,y_1), (x_2,y_2), \ldots, (x_n,y_n)\rbrace$, these indexes are defined as
+The two closed-form models and the two numerical regression algorithms displayed in the Figure \ref{regression} were compared on prediction performance using three indexes: mean squared error (MSE), mean absolute error (MAE) and coefficient of determination ($R^2$).
+For a generic prediction-making system, represented by the function $f(x)$, being validated over the set of datapoints $\lbrace(x_1,y_1), (x_2,y_2), \ldots, (x_n,y_n)\rbrace$, these indexes are defined as
 
 \begin{eqnarray}
   &&\textit{MSE} = \frac{1}{n}\sum_{i=1}^{n}{(f(x_i)-y_i)^2},\\
@@ -385,8 +386,8 @@ For a generic prediction making system, represented by the function $f(x)$, bein
   \text{ where } \bar{y} = \frac{1}{n}\sum_{i=1}^{n}{y_i}.
 \end{eqnarray}
 
-The reference values for a well-performing algorithm are $\textit{MSE}\geq 0$ and $\textit{MAE}\geq 0$ as close as possible to zero and $R^2 \in [0,\ 1]$ as close as possible to $1$ (when $R^2=1$, it is said that a model explains the data perfectly).
-In the present context, each $x_i$ represents an instance of serum creatinine concentration sCr, while each $y_i$ represents an instance of glomerular filtration rate GFR, and $n = 87$.
+The reference values for a well-performing algorithm are $\textit{MSE}\geq 0$ and $\textit{MAE}\geq 0$ as close as possible to zero and $R^2$ as close as possible to $1$\footnote{For a linear model, the coefficient $R^2$ ranges in $[0,\ 1]$: when $R^2=1$, it is said that a model explains the data perfectly. For a non-linear model, the coefficient of determination may take negative values. A negative $R^2$ means that the sample average explains the data better than the model.}.
+In the present context, each $x_i$ represents an instance of serum creatinine concentration sCr, each $y_i$ represents an instance of glomerular filtration rate GFR, and $n = 87$.
 Comparisons were also made to evaluate the generalization ability of the closed-form model (simplified Schwartz) as well as of the considered numerical regression algorithms (SBR and NANS-SBR).
 %Comparisons were also made to evaluate the generalization ability of the closed-form models (updated Schwartz and simplified Schwartz) as well as of the considered numerical regression algorithms (SBR and NANS-SBR). 
 This was achieved by measuring the ``roughness'' of the the regression curves through the index $G$ defined by
@@ -416,24 +417,26 @@ The value of $G$ is expected to be large for irregular curves and indeed it is c
   \centering
   \begin{tabular}{|l|c|c|c|c|}
     \hline
-    \textbf{Model}             &$\mathit{G}$  &$\mathit{MSE}$  &$\mathit{MAE}$  &$R^2$    \\
+    \textbf{Models and formulas}             &$\mathit{G}$  &$\mathit{MSE}$  &$\mathit{MAE}$  &$R^2$    \\
     \hline
-    Updated Schwartz           &$ - $ &$863.92$  &$23.19$  &$ 0.1491$  \\
-    Simplified Schwartz        &$0.36$  &$1341.80$ &$27.84$  &$-0.3216$  \\
-    NANS SBR                   &$1.83$  &$696.62$  &$20.32$  &$ 0.3139$  \\
-    Binning-less SBR           &$1.65$  &$674.90$  &$20.19$  &$ 0.3353$  \\
+    Updated Schwartz formula          & ---  &$863.92$  &$23.19$  &$ +0.1491$  \\
+    Simplified Schwartz formula       &$0.36$  &$1341.80$ &$27.84$  &$-0.3216$  \\
+    NANS SBR model                  &$1.83$  &$696.62$  &$20.32$  &$ +0.3139$  \\
+    Binning-less SBR model           &$1.65$  &$674.90$  &$20.19$  &$ +0.3353$  \\
     \hline
   \end{tabular}
-  \caption{Generalization/roughness index ($\mathit{G}$), mean squared error ($\mathit{MSE}$), mean absolute error ($\mathit{MAE}$) and coefficient of determination ($R^2$) for the four considered estimation models (updated Schwartz formula, simplified Schwartz formula independent of height, numerical-algebraic neural-system based statistical bivariate regression algorithm, and proposed statistical bivariate regression algorithm). [{\bf\red Nella tabella c'e' qualcosa che non va, perche' $R^2$ non puo' essere negativo.}]}
+  \caption{Generalization/roughness index ($\mathit{G}$), mean squared error ($\mathit{MSE}$), mean absolute error ($\mathit{MAE}$) and coefficient of determination ($R^2$) for the four considered estimation models (updated Schwartz formula, simplified Schwartz formula independent of height, numerical-algebraic neural-system based statistical bivariate regression algorithm, and proposed statistical bivariate regression algorithm).}
   \label{regstats}
 \end{table}
 
 %The Schwartz2009 model exhibits the lowest $R^2$ value.
-The Binning-less statistical bivariate regression algorithm exhibits the lowest $\textit{MSE}$ and $\textit{MAE}$ values, that shows that SBR is very effective at fitting data.
+The results of comparison are summarized in the table~\ref{regstats}. Among the four method considered, the binning-less statistical bivariate regression algorithm exhibits the lowest $\textit{MSE}$ and $\textit{MAE}$ values, that shows how SBR is very effective at fitting data. Taking the $G$-value of the regression line provided by the simplified Schwartz formula as a baseline, the binning-less algorithm exhibits a closer value to such baseline than the NANS SBR: this result shows that the novel SBR algorithm returns a smoother regression line compared to the NANS SBR one.
 %
 \section{Conclusions}\label{conclusion}
 %
-The aim of the present paper is to discuss the bivariate statistical regression method and to provide an improved algorithm which does not rely on binning for the steps which require estimation of the cumulative distribution functions. The proposed algorithm was compared to the original bivariate statistical regression algorithm based on numerical-algebraic neural systems in the application to a real-world dataset. The considered application is the estimation of an index of kidney function, the glomerular filtration rate, on the basis of regression by the creatinine concentration level in blood plasma. The comparison proved an all-round improvement in the new method, which, aside from being more efficient, yields a closer fit and a smoother regression curve.
+The aim of the present paper is to discuss the statistical  bivariate regression method and to provide an improved algorithm which does not rely on binning for the steps that require estimation of the cumulative distribution functions. 
+
+The proposed algorithm was compared to the original statistical bivariate regression algorithm based on numerical-algebraic neural systems in the application to a real-world dataset. The application that motivated the present research is the estimation of an index of kidney function, the glomerular filtration rate, on the basis of regression by the creatinine concentration level in blood plasma. The comparison proved an all-round improvement in the new method, which, aside from being more efficient, yields a closer fit and a smoother regression curve.
 %
 \begin{thebibliography}{99}
   \bibitem{bestchak} M.J. Best and N. Chakravarti, ``Active set algorithms for isotonic regression; a unifying framework'', \textit{Mathematical Programming}, Vol. 47, pp 425 -- 439, 1990
@@ -456,7 +459,7 @@ The aim of the present paper is to discuss the bivariate statistical regression 
 
   \bibitem{book} F.E. Harrell, \textit{Regression modeling strategies: with applications to linear models, logistic and ordinal regression, and survival analysis}, Springer Series in Statistics, 2015
 
-  \bibitem{fat} I. Janssen, P. T Katzmarzyk and R. Ross, ``Waist circumference and not body mass index explains obesity-related health risk', \textit{American Society for Clinical Nutrition}, Vol. 79, pp. 379 -- 384, 2004
+  \bibitem{fat} I. Janssen, P. T Katzmarzyk and R. Ross, ``Waist circumference and not body mass index explains obesity-related health risk'', \textit{American Society for Clinical Nutrition}, Vol. 79, pp. 379 -- 384, 2004
 
   \bibitem{control} R.E. Kopp and R.J. Orford, ``Linear regression applied to system identification for adaptive control systems'', \textit{The American Institute of Aeronautics and Astronautics Journal}, Vol. 1, No. 10, pp. 2300 -- 2306, 1963
 
@@ -466,7 +469,7 @@ The aim of the present paper is to discuss the bivariate statistical regression 
 
   \bibitem{ckdepi} A.S Levey, L.A. Stevens, C.H. Schmid, Y.L. Zhang, A.F. Castro III, H.I. Feldman, J.W. Kusek, P. Eggers, F. van Lente, T. Greene and J. Coresh, ``A new equation to estimate glomerular filtration rate'', \textit{Annals of Internal Medicine}, Vol. 150, No. 9, pp. 604 -- 612, 2009
 
-  \bibitem{pava} P. Mair, K. Hornik and J. de Leeuw, ``Isotone Optimization in R: Pool-Adjacent-Violators Algorithm (PAVA) and Active Set Methods``, \textit{Journal of Statistical Software}, Vol. 32, No. 5, pp. 1 -- 24, 2009
+  \bibitem{pava} P. Mair, K. Hornik and J. de Leeuw, ``Isotone optimization in R: pool-adjacent-violatorsaAlgorithm (PAVA) and active set methods``, \textit{Journal of Statistical Software}, Vol. 32, No. 5, pp. 1 -- 24, 2009
 
   \bibitem{ts} E. Masry, ``Multivariate local polynomial regression for time series: uniform strong consistency and rates'', \textit{Journal of Time Series Analysis}, Vol. 17, pp. 571 -- 599, 1996
 
@@ -480,7 +483,7 @@ The aim of the present paper is to discuss the bivariate statistical regression 
 
   \bibitem{mayo} A.D. Rule, T.S. Larson, E.J. Bergstralh, J.M. Slezak, S.J. Jacobsen and F.G. Cosio, ``Using serum creatinine to estimate glomerular filtration rate: accuracy in good health and in chronic kidney disease'', \textit{Annals of Internal Medicine}, Vol. 141, No. 12, pp. 929 -- 937, 2004
 
-  \bibitem{schwartz} G.J. Schwartz, A. Mu\~{n}oz, M.F. Schneider, R.H. Mak, F. Kaskel, B.A. Warady and S.L. Furth, ``New equations to estimate GFR in Children with CKD'', \textit{Journal of the American Society of Nephrology}, Vol. 20, No. 3, pp. 629 -– 637, 2009
+  \bibitem{schwartz} G.J. Schwartz, A. Mu\~{n}oz, M.F. Schneider, R.H. Mak, F. Kaskel, B.A. Warady and S.L. Furth, ``New equations to estimate GFR in Children with CKD'', \textit{Journal of the American Society of Nephrology}, Vol. 20, No. 3, pp. 629 -- 637, 2009
 
   \bibitem{schwartz3} G.J. Schwartz, M.F. Schneider, P.S. Maier, M. Moxey-Mims, V.R. Dharnidharka, B.A. Warady, S.L. Furth and A. Mu\~{n}oz, ``Improved equations estimating GFR in children with chronic kidney disease using an immunonephelometric determination of cystatin C'', \textit{Kidney International}, Vol. 82, No. 4, pp. 445 -- 453, 2012
 
@@ -490,7 +493,7 @@ The aim of the present paper is to discuss the bivariate statistical regression 
 
   \bibitem{jaffe} C. Slot, ``Plasma creatinine determination a new and specific Jaffe reaction method'', \textit{Scandinavian Journal of Clinical and Laboratory Investigation}, Vol. 17, No. 4, pp. 381 -- 387, 1965
 
-  \bibitem{mgfr} I. Soveri, U.B. Berg, J. Bj\"{o}rk, C.G. Elinder, A. Grubb, I. Mejare, G. Sterner and S.E. B\"{a}ck, ``Measuring GFR: A Systematic Review'', \textit{American Journal of Kidney Diseases}, Vol. 64, No. 3, pp. 411 -- 424, 2014
+  \bibitem{mgfr} I. Soveri, U.B. Berg, J. Bj\"{o}rk, C.G. Elinder, A. Grubb, I. Mejare, G. Sterner and S.E. B\"{a}ck, ``Measuring GFR: a systematic review'', \textit{American Journal of Kidney Diseases}, Vol. 64, No. 3, pp. 411 -- 424, 2014
 
   \bibitem{idms} M.J. Welch, A. Cohen, H.S. Hertz, K.J. Ng, R. Schaffer, P. van der Lijn, and E. White, ``Determination of serum creatinine by isotope dilution mass spectrometry as a candidate definitive method'', \textit{Analytical Chemistry}, Vol. 58, No. 8, pp. 1681 -- 1685, 1986
 
@@ -499,9 +502,57 @@ The aim of the present paper is to discuss the bivariate statistical regression 
 \end{thebibliography}
 
 \begin{appendix}
-  \section{MATLAB code to implement the estimating functions}
-  \lstinputlisting{../cdf.m}
-  \lstinputlisting{../invcdf.m}
-  \lstinputlisting{../sbr.m}
+%
+\section{MATLAB codes to implement the estimating functions}\label{appa}
+% 
+The MATLAB codes used to implement the functions explained in Section~\ref{blsbr} in the numerical application to GFR estimation are reported in the present Appendix for the convenience of the reader.
+
+The Figure~\ref{cdf_fun} shows the MATLAB code used to estimate the cumulative distribution function in a given query-value.
+%
+\begin{figure}[ht]
+\lstinputlisting{mcodes/cdf.m}
+\caption{MATLAB code used to implement the \textsc{cdf} function.}
+\label{cdf_fun}
+\end{figure}  
+%
+
+The Figure~\ref{invcdf_fun} shows the MATLAB code used to estimate the inverse cumulative distribution function in a given query-value.
+%
+\begin{figure}[ht]  
+\lstinputlisting{mcodes/invcdf.m}
+\caption{MATLAB code used to implement the \textsc{invCdf} function.}
+\label{invcdf_fun}
+\end{figure}  
+%  
+
+The Figure~\ref{sbr_fun} shows the MATLAB code used to implement the statistical bivariate regression algorithm.
+%
+\begin{figure}[ht]  
+\lstinputlisting{mcodes/sbr.m}
+\caption{MATLAB code used to implement the proposed SBR algorithm.}
+\label{sbr_fun}
+\end{figure}  
+%  
+
+A clear advantage of the current version of the codes over the previous structure developed in \cite{fiori} is that the current version does not make extensive use of high-level (pre-built) functions and can therefore be easily re-coded into a lower-level programming language such as C/C++ for efficiency and portability.
+
+The MATLAB implementation of the proposed SBR algorithm is already efficient in computation. To get a glimpse of the computational burden of the proposed SBR algorithm in comparison with the NANS SBR algorithm presented in \cite{fiori}, we tested the algorithms on the creatinine/GFR dataset discussed in the Section~\ref{gfr} on a number $N$ of query points variable from $1$ to $100$ (we recall that the dataset contains $87$ data-pairs). The Table~\ref{timestats} shows runtimes (in ms) to complete $1000$ independent trials on a dual-core machine.
+%
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \textbf{Algorithms}             &$N=1$ &$N=10$  &$N=50$  &$N=100$ \\
+    \hline
+    NANS SBR model                  &$0.376978$  &$0.365465$  &$0.371726$  &$0.383950$  \\
+    Binning-less SBR model           &$0.123865$  &$0.148599$  &$0.231372$  &$0.379054$  \\
+    \hline
+  \end{tabular}
+  \caption{Runtimes (in ms) of the algorithms tested on the creatinine/GFR dataset discussed in the Section~\ref{gfr} on a variable number $N$ of query points, averaged over $1000$ independent trials to get rid of statistical machine-level fluctuations.}
+  \label{timestats}
+\end{table}
+%
+
+The proposed algorithm appears suitably light in computation complexity to get paired to bed-side testing.
 \end{appendix}
 \end{document}
