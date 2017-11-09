@@ -241,8 +241,8 @@ The proposed procedure prescribes next to estimate the inverse probability $P^{-
 %
 \section{Application to glomerular filtration rate estimation}\label{gfr}
 %
-Chronic kidney disease is a recognized public health problem. Chronic kidney disease is classified into stages according to the level of glomerular filtration rate, and stage-specific action plans facilitate the evaluation and the management of chronic kidney disease. 
-%Kidney damage is usually ascertained from biochemical markers. 
+Chronic kidney disease is a recognized public health problem. Chronic kidney disease is classified into stages according to the level of glomerular filtration rate, and stage-specific action plans facilitate the evaluation and the management of chronic kidney disease.
+%Kidney damage is usually ascertained from biochemical markers.
 Glomerular filtration rate can be estimated by means of empirical formulas that incorporate blood serum creatinine concentration, blood serum cystatin-C concentration as well as demographic and clinical variables such as age, gender, race, and body size. Glomerular filtration rate estimating formulas provide a more accurate assessment of the level of kidney function than biomarkers concentrations alone. %National and international organizations recommend that clinical laboratories report estimated GFR and that clinicians use GFR estimates to evaluate kidney function.
 
 Measuring the glomerular filtration rate is crucial for determining appropriate drug dosing, monitoring the effects of therapeutic interventions, and following the progression of chronic kidney disease. For instance, in pediatric autologous hematopoietic stem cell transplantation treatment protocols, chemotherapy dosing is commonly based on renal function, as patients with a reduced GFR levels receive reduced dosages, which can affect toxicity profiles and therapeutic benefit \cite{laskin}.
@@ -284,7 +284,7 @@ Commonly used formulas to estimate the GFR are based on blood serum creatinine c
   where the serum creatinine concentration refers specifically to the values measured by the IDMS enzymatic method. The updated Schwarz formula is a standardized version of the original Schwartz formula $\mathit{GFR} = \sigma \cdot \tfrac{height}{sCr}$, where the serum creatinine concentration refers specifically to the values measured by the Jaffe method, and the constant $\sigma$ depends on muscle mass, which varies with a child's age, and ranges in $33-55$.
 \end{itemize}
 
-In the above formulas and throughout this paper, measurement units of the \emph{GFR} and the \emph{sCr} values are mL/min/1.73m$^2$ and mg/dL respectively, while patients \emph{height} is expressed in meters and patients \emph{age} is expressed in years. 
+In the above formulas and throughout this paper, measurement units of the \emph{GFR} and the \emph{sCr} values are mL/min/1.73m$^2$ and mg/dL respectively, while patients \emph{height} is expressed in meters and patients \emph{age} is expressed in years.
 
 When measurement and calibration is more broadly available, glomerular filtration rate estimates using cystatin C may also exhibit broad clinical utility. Commonly used formulas based on blood serum cystatin C concentration levels and demographic/clinical variables are:
 
@@ -389,7 +389,7 @@ For a generic prediction-making system, represented by the function $f(x)$, bein
 The reference values for a well-performing algorithm are $\textit{MSE}\geq 0$ and $\textit{MAE}\geq 0$ as close as possible to zero and $R^2$ as close as possible to $1$\footnote{For a linear model, the coefficient $R^2$ ranges in $[0,\ 1]$: when $R^2=1$, it is said that a model explains the data perfectly. For a non-linear model, the coefficient of determination may take negative values. A negative $R^2$ means that the sample average explains the data better than the model.}.
 In the present context, each $x_i$ represents an instance of serum creatinine concentration sCr, each $y_i$ represents an instance of glomerular filtration rate GFR, and $n = 87$.
 Comparisons were also made to evaluate the generalization ability of the closed-form model (simplified Schwartz) as well as of the considered numerical regression algorithms (SBR and NANS-SBR).
-%Comparisons were also made to evaluate the generalization ability of the closed-form models (updated Schwartz and simplified Schwartz) as well as of the considered numerical regression algorithms (SBR and NANS-SBR). 
+%Comparisons were also made to evaluate the generalization ability of the closed-form models (updated Schwartz and simplified Schwartz) as well as of the considered numerical regression algorithms (SBR and NANS-SBR).
 This was achieved by measuring the ``roughness'' of the the regression curves through the index $G$ defined by
 %
 \begin{equation}
@@ -430,11 +430,11 @@ The value of $G$ is expected to be large for irregular curves and indeed it is c
 \end{table}
 
 %The Schwartz2009 model exhibits the lowest $R^2$ value.
-The results of comparison are summarized in the table~\ref{regstats}. Among the four method considered, the binning-less statistical bivariate regression algorithm exhibits the lowest $\textit{MSE}$ and $\textit{MAE}$ values, that shows how SBR is very effective at fitting data. Taking the $G$-value of the regression line provided by the simplified Schwartz formula as a baseline, the binning-less algorithm exhibits a closer value to such baseline than the NANS SBR: this result shows that the novel SBR algorithm returns a smoother regression line compared to the NANS SBR one.
+The results of comparison are summarized in the table~\ref{regstats}. Among the four methods considered, the binning-less statistical bivariate regression algorithm exhibits the lowest $\textit{MSE}$ and $\textit{MAE}$ values, that shows how SBR is very effective at fitting data. Taking the $G$-value of the regression line provided by the simplified Schwartz formula as a baseline, the binning-less algorithm exhibits a closer value to such baseline than the NANS SBR: this result shows that the novel SBR algorithm returns a smoother regression line compared to the NANS SBR one.
 %
 \section{Conclusions}\label{conclusion}
 %
-The aim of the present paper is to discuss the statistical  bivariate regression method and to provide an improved algorithm which does not rely on binning for the steps that require estimation of the cumulative distribution functions. 
+The aim of the present paper is to discuss the statistical  bivariate regression method and to provide an improved algorithm which does not rely on binning for the steps that require estimation of the cumulative distribution functions.
 
 The proposed algorithm was compared to the original statistical bivariate regression algorithm based on numerical-algebraic neural systems in the application to a real-world dataset. The application that motivated the present research is the estimation of an index of kidney function, the glomerular filtration rate, on the basis of regression by the creatinine concentration level in blood plasma. The comparison proved an all-round improvement in the new method, which, aside from being more efficient, yields a closer fit and a smoother regression curve.
 %
@@ -504,7 +504,7 @@ The proposed algorithm was compared to the original statistical bivariate regres
 \begin{appendix}
 %
 \section{MATLAB codes to implement the estimating functions}\label{appa}
-% 
+%
 The MATLAB codes used to implement the functions explained in Section~\ref{blsbr} in the numerical application to GFR estimation are reported in the present Appendix for the convenience of the reader.
 
 The Figure~\ref{cdf_fun} shows the MATLAB code used to estimate the cumulative distribution function in a given query-value.
@@ -513,30 +513,30 @@ The Figure~\ref{cdf_fun} shows the MATLAB code used to estimate the cumulative d
 \lstinputlisting{mcodes/cdf.m}
 \caption{MATLAB code used to implement the \textsc{cdf} function.}
 \label{cdf_fun}
-\end{figure}  
+\end{figure}
 %
 
 The Figure~\ref{invcdf_fun} shows the MATLAB code used to estimate the inverse cumulative distribution function in a given query-value.
 %
-\begin{figure}[ht]  
+\begin{figure}[ht]
 \lstinputlisting{mcodes/invcdf.m}
 \caption{MATLAB code used to implement the \textsc{invCdf} function.}
 \label{invcdf_fun}
-\end{figure}  
-%  
+\end{figure}
+%
 
 The Figure~\ref{sbr_fun} shows the MATLAB code used to implement the statistical bivariate regression algorithm.
 %
-\begin{figure}[ht]  
+\begin{figure}[ht]
 \lstinputlisting{mcodes/sbr.m}
 \caption{MATLAB code used to implement the proposed SBR algorithm.}
 \label{sbr_fun}
-\end{figure}  
-%  
+\end{figure}
+%
 
 A clear advantage of the current version of the codes over the previous structure developed in \cite{fiori} is that the current version does not make extensive use of high-level (pre-built) functions and can therefore be easily re-coded into a lower-level programming language such as C/C++ for efficiency and portability.
 
-The MATLAB implementation of the proposed SBR algorithm is already efficient in computation. To get a glimpse of the computational burden of the proposed SBR algorithm in comparison with the NANS SBR algorithm presented in \cite{fiori}, we tested the algorithms on the creatinine/GFR dataset discussed in the Section~\ref{gfr} on a number $N$ of query points variable from $1$ to $100$ (we recall that the dataset contains $87$ data-pairs). The Table~\ref{timestats} shows runtimes (in ms) to complete $1000$ independent trials on a dual-core machine.
+The MATLAB implementation of the proposed SBR algorithm is already efficient in computation. To get a glimpse of the computational burden of the proposed SBR algorithm in comparison with the NANS SBR algorithm presented in \cite{fiori}, we tested the algorithms on the creatinine/GFR dataset discussed in the Section~\ref{gfr} on a number $N$ of query points variable from $1$ to $100$ (we recall that the dataset contains $87$ data-pairs). The Table~\ref{timestats} shows runtimes (in ms) to complete $1000$ independent trials on a 2.4 GHz dual-core machine running the Matlab R2017a environment.
 %
 \begin{table}[ht]
   \centering
