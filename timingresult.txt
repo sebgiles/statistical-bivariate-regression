@@ -1,0 +1,34 @@
+>> timing(1)
+NANS:
+Elapsed time is 0.376978 seconds.
+
+Binningless:
+Elapsed time is 0.123865 seconds.
+
+>> timing(10)
+NANS:
+Elapsed time is 0.365465 seconds.
+
+Binningless:
+Elapsed time is 0.148599 seconds.
+
+>> timing(50)
+NANS:
+Elapsed time is 0.371726 seconds.
+
+Binningless:
+Elapsed time is 0.231372 seconds.
+
+>> timing(100)
+NANS:
+Elapsed time is 0.383950 seconds.
+
+Binningless:
+Elapsed time is 0.379054 seconds.
+
+>> timing(200)
+NANS:
+Elapsed time is 0.386374 seconds.
+
+Binningless:
+Elapsed time is 0.970002 seconds.
