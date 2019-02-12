@@ -16,11 +16,14 @@ function [X,Y] = nans_sbr(Dx,Dy,R,M)
   [py,y] = hist(Dy, By);
 
   px = px'/nx;
-  py = (ny*py'+1)/(ny^2+By);
+  py = (ny*py'+1)/(ny^2+By); % see DOI 10.1007/s00521-012-0958-6
   Px = cumsum(px);
   Py = cumsum(py);
   Px = [0; Px];
   Py = [0; Py];
+  Px(end) = 1;
+  Py(end) = 1;
+  
   x = [min(Dx); x' + (max(Dx)-min(Dx))/(2*Bx)];
   x(end) = max(Dx); 
   y = [min(Dy); y' + (max(Dy)-min(Dy))/(2*By)];
@@ -38,5 +41,4 @@ function [X,Y] = nans_sbr(Dx,Dy,R,M)
   end
 
   Y = interp1(Py,y,Pxi);
-
 end

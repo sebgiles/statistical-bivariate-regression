@@ -1,8 +1,18 @@
 % all arguments must be column vectors
 % decresing model hypothesis
-function [Qy] = sbr(Dx,Dy,Qx)
+function [Qy] = sbr(Dx,Dy,Qx, monotonicity)
+  if nargin < 4
+    monotonicity = "Decreasing";
+  end
 
-  P = 1 - cdf(Dx,Qx); % = pmf(Dx,Qx) % for increasing model
+  if monotonicity == "Increasing"
+    P = cdf(Dx,Qx);
+  elseif monotonicity == "Decreasing"
+    P = 1 - cdf(Dx,Qx);
+  else
+    disp Invalid fourth argument
+    return
+  end
   Qy = invcdf(Dy, P);
 
 end

@@ -1,9 +1,9 @@
-function [] = gfr()
+function [] = gfr(T)
 
   % ======= IMPORT data ============
   % stop warning about names being changed (maybe a bug)
   warning('off','all')
-  T = readtable('table1.xlsx');
+  %T = readtable(filename);
   warning('on','all')
   n = height(T);
   T.Gender = logical(T.Gender);
@@ -43,7 +43,7 @@ function [] = gfr()
 
   disp('Press any key to continue')
   disp(' ')
-  pause
+  %pause
   close
 
   % ===== PLOT2 - SHOW measurement discrepancies ======
@@ -55,11 +55,12 @@ function [] = gfr()
   refline(1,0)
   title('Discrepancy between measurement techniques')
 
-  T.Cr = (T.CrE + T.CrIDMS) / 2;
+  T.CrM = (T.CrE + T.CrIDMS) / 2;
+
   T = sortrows(T,'CrIDMS');
 
   subplot(2,1,2)
-  h = histogram( 100*(T.CrIDMS - T.CrE)./T.Cr);
+  h = histogram( 100*(T.CrIDMS - T.CrE)./T.CrM);
   h.NumBins = 20;
   title('Relative difference distribution')
   xlabel('Relative difference [%]')
@@ -70,9 +71,11 @@ function [] = gfr()
   disp('Relative difference is calculated as')
   disp('difference divided by average.')
   disp('IDMS will be used from now on.')
-  pause
+  %pause
   close
   clear h
+
+  T.Cr = T.CrIDMS;
 
   % ==== PLOT3 - AGE vs GFR and HEIGHT vs GFR =====
   figure('position', [80, 80, 900, 400])
@@ -80,9 +83,9 @@ function [] = gfr()
   hold on
   plot(NaN,NaN,'ob'); % dummy
   plot(NaN,NaN,'^b'); % dummy
-  scatter(T.Age(~T.Gender), T.mGFR(~T.Gender), [], T.CrIDMS(~T.Gender), ...
+  scatter(T.Age(~T.Gender), T.mGFR(~T.Gender), [], T.Cr(~T.Gender), ...
     'filled', 'o')
-  scatter(T.Age(T.Gender), T.mGFR(T.Gender), [], T.CrIDMS(T.Gender), ...
+  scatter(T.Age(T.Gender), T.mGFR(T.Gender), [], T.Cr(T.Gender), ...
     'filled', '^')
   h = colorbar;
   legend('female','male');
@@ -109,23 +112,23 @@ function [] = gfr()
   disp(' ')
   disp('By looking at this plotted data GFR does')
   disp('not seem strongly dependent on age or height.')
-  pause
+  %pause
   close
 
   % ===== PLOT4 - 3D CRIDMS vs HEIGHT vs GFR scatter =====
   figure('position', [80, 80, 600, 600])
   plot3(NaN,NaN,NaN,'ob'); % dummy like above
   hold on
-  scatter3(T.CrIDMS,T.Height,T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
+  scatter3(T.Cr,T.Height,T.mGFR, 7, [1-T.Gender,zeros(n,1),T.Gender])
 
   % add Schwartz2009 model overlay =====
   m = 20; % numero di punti per asse per il grafico
-  [gridCR, gridHeight] = meshgrid(linspace(min(T.CrIDMS), max(T.CrIDMS), m), ...
+  [meshCr, meshHeight] = meshgrid(linspace(min(T.Cr), max(T.Cr), m), ...
                                   linspace(min(T.Height), max(T.Height), m)  );
 
-  SchwartzModel = 41.3 * gridHeight ./ gridCR;
+  SchwartzModel = 41.3 * meshHeight ./ meshCr;
 
-  surf(gridCR, gridHeight, SchwartzModel, 'EdgeColor', 'none')
+  surf(meshCr, meshHeight, SchwartzModel, 'EdgeColor', 'none')
   alpha(0.1)
 
   legend('male','female','Schwartz2009 Model', 'Location','northeast');
@@ -133,26 +136,26 @@ function [] = gfr()
   xlabel('Creatinine [mg/dL]')
   ylabel('Height [m]')
   zlabel('GFR [mL/min/1.73m^2]')
-  pause
+  %pause
   close
 
   % ===== 6 - compare measurements and estimates =====
   % ===== CALCULATE MDRD GFR estimation =====
-  T.MDRD =  186 * T.CrIDMS.^-1.154  ...
+  T.MDRD =  186 * T.Cr.^-1.154  ...
             .* T.Age.^-0.203    ...
             .* (0.742).^(1-T.Gender);
 
   % ===== CALCULATE CKD-EPI GFR estimation =====
   T.CKDEPI =  141 ...
-              * min(T.CrIDMS./(0.7+0.2*T.Age), 1) .^ -(0.329+0.082*T.Gender) ...
-              .* max(T.CrIDMS./(0.7+0.2*T.Age), 1) .^ -1.209 ...
+              * min(T.Cr./(0.7+0.2*T.Age), 1) .^ -(0.329+0.082*T.Gender) ...
+              .* max(T.Cr./(0.7+0.2*T.Age), 1) .^ -1.209 ...
               .* 0.993 .^T.Age ...
               .* (1.018-0.018 * T.Gender);
 
   % ===== CALCULATE Mayo Quadratic GFR estimation =====
   T.Mayo = exp( 1.911                     ...
-                +5.249./max(T.CrIDMS, 0.8)    ...
-                -2.114./max(T.CrIDMS, 0.8).^2 ...
+                +5.249./max(T.Cr, 0.8)    ...
+                -2.114./max(T.Cr, 0.8).^2 ...
                 -0.00686*T.Age            ...
                 -0.205*(1-T.Gender)       );
 
@@ -164,27 +167,27 @@ function [] = gfr()
 
   figure('position', [80, 80, 600, 600])
   hold on
-  scatter(T.CrIDMS(~T.Gender), T.mGFR(~T.Gender), [], T.Height(~T.Gender), ...
+  scatter(T.Cr(~T.Gender), T.mGFR(~T.Gender), [], T.Height(~T.Gender), ...
     'filled', 'o')
-  scatter(T.CrIDMS(T.Gender), T.mGFR(T.Gender), [], T.Height(T.Gender), ...
+  scatter(T.Cr(T.Gender), T.mGFR(T.Gender), [], T.Height(T.Gender), ...
     'filled', '^')
   h = colorbar;
   legend('female','male');
   title(h, 'height [m]')
 
-  plot(T.CrIDMS, T.MDRD, 'k:')
-  plot(T.CrIDMS, T.CKDEPI, 'k--')
-  plot(T.CrIDMS, T.Mayo,'k-.')
-  plot(T.CrIDMS, T.Schwartz2009,'k-')
+  plot(T.Cr, T.MDRD, 'k:')
+  plot(T.Cr, T.CKDEPI, 'k--')
+  plot(T.Cr, T.Mayo,'k-.')
+  plot(T.Cr, T.Schwartz2009,'k-')
 
-  ylim([0 1.5*max(T.mGFR)]);
+  ylim([min(T.mGFR) 1.1*max(T.mGFR)]);
 
   legend('female','male', 'MDRD', 'CKD-EPI', 'Mayo Quadratic', ...
     'Schwartz2009');
   xlabel('Measured serum creatinine concentration (sCr) [mg/dL]')
   ylabel('Measured and estimated GFR [mL/min/1.73m^2]')
 
-  pause
+  %pause
   close
 
   % ===== 6 - distributions
@@ -195,13 +198,13 @@ function [] = gfr()
 
   figure('position', [80, 80, 400, 720])
   subplot(2,1,1)
-  QCr = linspace(min(T.CrIDMS), max(T.CrIDMS), R)';
-  plot(QCr,cdf(T.CrIDMS, QCr));
+  QCr = linspace(min(T.Cr), max(T.Cr), R)';
+  plot(QCr,cdf(T.Cr, QCr));
   title('Creatinine CDF')
   xlabel('Creatinine concentration [mg/dL]')
 
   disp(' worst relative error for creatinine data: ')
-  invQCr = invcdf(T.CrIDMS, cdf(T.CrIDMS, QCr));
+  invQCr = invcdf(T.Cr, cdf(T.Cr, QCr));
   delta = (QCr-invQCr)./QCr;
   err = max(abs(delta));
   disp(err)
@@ -218,72 +221,110 @@ function [] = gfr()
   err = max(abs(delta));
   disp(err)
 
-  pause
+  %pause
   close
 
   % ===== 7 - regression =====
+
+  % set aside a test set
+  [Train, Test] = splitdata(T, 0.9);
+
   disp(' ')
   disp('Showing result of statistical bivariate regression.')
 
   figure('position', [80, 80, 600, 600])
   hold on
 
-  % show datapoints
-  scatter(T.CrIDMS(~T.Gender), T.mGFR(~T.Gender), [], T.Height(~T.Gender), ...
-    'filled', 'o')
-  scatter(T.CrIDMS(T.Gender), T.mGFR(T.Gender), [], T.Height(T.Gender), ...
-    'filled', '^')
+  % show Test set datapoints
+  scatter(Test.Cr(~Test.Gender), Test.mGFR(~Test.Gender), [], ...
+      Test.Height(~Test.Gender), 'filled', 'o')
+  scatter(Test.Cr(Test.Gender), Test.mGFR(Test.Gender), [], ...
+      Test.Height(Test.Gender),  'filled', '^')
   h = colorbar;
   legend('female','male');
   xlabel('Serum creatinine concentration (sCr) [mg/dL]')
   ylabel('Measured and estimated GFR [mL/min/1.73m^2]')
   title(h, 'height [m]')
 
-  % compute curves
-  [X,NANS_SBRGFR] = nans_sbr(T.CrIDMS, T.mGFR, R, 'Decreasing');
+  Grid = table();
 
-  SBRGFR = sbr(T.CrIDMS,T.mGFR,X);
+  % get models
+  [Grid.Cr, Grid.NANS_GFR] = nans_sbr(Train.Cr, Train.mGFR, R, 'Decreasing');
+  Grid.SBR_GFR = sbr(Train.Cr, Train.mGFR, Grid.Cr);
+  Grid.Schw09MH = 41.3*mean(Train.Height)./Grid.Cr;
 
-  Schwartz2009MH = 41.3*mean(T.Height)./X;
-
-  [xschw, yschw] = rep2avg(T.CrIDMS,T.Schwartz2009);
-  Schwartz2009 = interp1(xschw, yschw, X);
+  %rep2avg smooths my lines too much if there are many reps, so i use derep
+  %[xschw, yschw] = rep2avg(T.Cr,T.Schwartz2009);
+  %[xschw, yschw] = derep(T.Cr,Test.Schwartz2009);
+  %Schwartz2009 = interp1(xschw, yschw, GridCr);
 
   % show curves
-  plot(X, Schwartz2009, 'k:', 'LineWidth', 0.8)
-  plot(X, Schwartz2009MH, 'k-.','LineWidth',0.6)
-  plot(X, SBRGFR,'k-','LineWidth',0.6)
-  plot(X, NANS_SBRGFR, 'k--', 'LineWidth', 0.6)
-  ylim([20,180]);
+  plot(Test.Cr, Test.Schwartz2009, 'k:', 'LineWidth', 0.8)
+  plot(Grid.Cr, Grid.Schw09MH, 'k-.','LineWidth',0.6)
+  plot(Grid.Cr, Grid.SBR_GFR,'k-','LineWidth',0.6)
+  plot(Grid.Cr, Grid.NANS_GFR, 'k--', 'LineWidth', 0.6)
+  ylim([0.9*min(Test.mGFR) 1.1*max(Test.mGFR)]);
   legend('female','male', 'Schwartz2009', ...
          'Schwartz2009 (mean height)','Binning-less SBR','NANS SBR');
 
-  % calculate stddev
-  T.SBRGFR = sbr(T.CrIDMS,T.mGFR,T.CrIDMS);
-  T.NANS_SBRGFR = interp1(X, NANS_SBRGFR, T.CrIDMS);
-  T.Schwartz2009MH = 41.3*mean(T.Height)./T.CrIDMS;
+  % apply models to testset
+  Test.SBR_GFR = sbr(Train.Cr, Train.mGFR, Test.Cr);
+  % above is to be compared with following:
+  %    Test.SBR_INTERP_GFR = interp1(Grid.Cr, Grid.SBR_GFR, Test.Cr);
+  Test.NANS_GFR = interp1(Grid.Cr, Grid.NANS_GFR, Test.Cr,'linear', 'extrap');
+  Test.Schw09MH = 41.3*mean(Train.Height)./Test.Cr;
 
-  SchwartzSD = sqm(T.Schwartz2009, T.mGFR);
-  SchwartzMHSD = sqm(T.Schwartz2009MH, T.mGFR);
-  SBRSD = sqm(T.SBRGFR, T.mGFR);
-  NANS_SBRSD = sqm(T.NANS_SBRGFR, T.mGFR);
+  % calculate stddev
+  Schwartz_SD = sqm(Test.Schwartz2009, Test.mGFR);
+  SchwMH_SD = sqm(Test.Schw09MH, Test.mGFR);
+  SBR_SD = sqm(Test.SBR_GFR, Test.mGFR);
+  NANS_SD = sqm(Test.NANS_GFR, Test.mGFR);
+
+  trim = 1;
 
   % roughness
-  SchwartzR = roughness(Schwartz2009);
-  SchwartzMHR = roughness(Schwartz2009MH);
-  SBRR = roughness(SBRGFR);
-  NANS_SBRR = roughness(NANS_SBRGFR);
+  %SchwartzR = roughness(Schwartz2009(trim:end-trim)); % does not apply
+  SchwartzR = NaN;
+  SchwMH_R = roughness(Grid.Schw09MH(1+trim:end-trim));
+  SBR_R = roughness(Grid.SBR_GFR(1+trim:end-trim));
+  NANS_R = roughness(Grid.NANS_GFR(1+trim:end-trim));
+
+  %relativeroughness
+  SchwartzRR = NaN;
+  SchwMH_RR = relroughness(Grid.Schw09MH(1+trim:end-trim));
+  SBR_RR = relroughness(Grid.SBR_GFR(1+trim:end-trim));
+  NANS_RR = relroughness(Grid.NANS_GFR(1+trim:end-trim));
+
+  % MAE
+  Schwartz_MAE = mae(Test.Schwartz2009, Test.mGFR);
+  SchwMH_MAE = mae(Test.Schw09MH, Test.mGFR);
+  SBR_MAE = mae(Test.SBR_GFR, Test.mGFR);
+  NANS_MAE = mae(Test.NANS_GFR, Test.mGFR);
+
+  % VAF
+  Schwartz_VAF = vaf(Test.Schwartz2009, Test.mGFR);
+  SchwMH_VAF   = vaf(Test.Schw09MH, Test.mGFR);
+  SBR_VAF      = vaf(Test.SBR_GFR, Test.mGFR);
+  NANS_VAF     = vaf(Test.NANS_GFR, Test.mGFR);
+
+  % R-Squared
+  Schwartz_R2 = corrcoef(Test.Schwartz2009, Test.mGFR);
+  SchwMH_R2   = corrcoef(Test.Schw09MH, Test.mGFR);
+  SBR_R2      = corrcoef(Test.SBR_GFR, Test.mGFR);
+  NANS_R2     = corrcoef(Test.NANS_GFR, Test.mGFR);
 
   % ui table
-  t_data = [SchwartzSD   SchwartzR
-            SchwartzMHSD SchwartzMHR
-            SBRSD        SBRR
-            NANS_SBRSD   NANS_SBRR];
+  t_data = [
+    SchwartzR SchwartzRR Schwartz_SD Schwartz_MAE Schwartz_R2(1,2) Schwartz_VAF
+    SchwMH_R  SchwMH_RR  SchwMH_SD   SchwMH_MAE   SchwMH_R2(1,2)   SchwMH_VAF
+    NANS_R    SBR_RR     NANS_SD     NANS_MAE     NANS_R2(1,2)     NANS_VAF
+    SBR_R     NANS_RR    SBR_SD      SBR_MAE      SBR_R2(1,2)      SBR_VAF
+    ];
 
-  figure('position', [680, 580, 410, 100])
-  t = uitable('Data', t_data, 'InnerPosition', [0,0,600,100]);
-  t.ColumnName = {'MSE','R'};
-  t.RowName = {'Schwartz2009', 'Schwartz2009 (mean height)', 'Binning-less SBR', 'NANS SBR'};
+  figure('position', [680, 580, 720, 100])
+  t = uitable('Data', t_data, 'InnerPosition', [0,0,800,100]);
+  t.ColumnName = {'G', 'G_R','MSE','MAE','R^2','VAF'};
+  t.RowName = {'Schwartz2009', 'Schwartz2009 (mean height)', 'NANS SBR', 'Binning-less SBR'};
 
   pause
   close
