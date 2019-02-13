@@ -1,5 +1,5 @@
 xrange = [5,95];
-ntrain = 2000;
+ntrain = 1000;
 ntest = 100;
 [Train, Test, f] = makeartificialdata(ntrain,ntest,xrange);    
 
@@ -23,14 +23,14 @@ svm = fitrsvm(Train.x, Train.y_m, 'KernelFunction', 'gaussian');
 Grid.y_svr = predict(svm, Grid.x);
 Test.y_svr = predict(svm, Test.x);
 
-hiddenLayerSizes = [10];
+hiddenLayerSizes = [2,2];
 net = fitnet(hiddenLayerSizes,'trainlm');
 net.divideParam.trainRatio = 90/100;
 net.divideParam.valRatio = 10/100;
 net.divideParam.testRatio = 0/100;
 net.trainParam.showWindow = false;
 net= train(net,Train.x',Train.y_m');
-Grid.y_ann = net(Grid.x')';
+Grid.y_ann = predict(svm, Grid.x);
 Test.y_ann = net(Test.x')';
 
 tree = fitrtree(Train.x, Train.y_m);
@@ -66,18 +66,12 @@ indices.R2('svr')      = r2(Test.y_m, Test.y_svr);
 indices.R2('nn')       = r2(Test.y_m, Test.y_ann);
 indices.R2('rt')       = r2(Test.y_m, Test.y_rt);
 
-trim=10;
+trim=1
 indices.relroughness('nans') = relroughness(Grid.y_nans(1+trim:end-trim));
 indices.relroughness('sbr')  = relroughness(Grid.y_sbr(1+trim:end-trim));
 indices.relroughness('svr')  = relroughness(Grid.y_svr(1+trim:end-trim));
 indices.relroughness('nn')   = relroughness(Grid.y_ann(1+trim:end-trim));
 indices.relroughness('rt')   = relroughness(Grid.y_rt(1+trim:end-trim));
-
-indices.roughness('nans') = roughness(Grid.y_nans(1+trim:end-trim));
-indices.roughness('sbr')  = roughness(Grid.y_sbr(1+trim:end-trim));
-indices.roughness('svr')  = roughness(Grid.y_svr(1+trim:end-trim));
-indices.roughness('nn')   = roughness(Grid.y_ann(1+trim:end-trim));
-indices.roughness('rt')   = roughness(Grid.y_rt(1+trim:end-trim));
 
 indices
 pause

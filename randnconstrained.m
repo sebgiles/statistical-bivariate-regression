@@ -12,5 +12,4 @@ function out = randnconstrained(h, w, limits, var)
             end
         end
     end
-    out = sort(out);           
 end

@@ -10,20 +10,27 @@ function [Train, Test, f] = makeartificialdata(ntrain,ntest,xrange)
     poly = polyfit(P(:,1),P(:,2),5);
     f = poly2sym(poly);
 
-    noisex = 0;
-    noisey = 10;
+    trainnoisex = 0;
+    trainnoisey = 2;
 
     Train = table();
     Train.perfx = randnconstrained(ntrain,1,xrange);
     Train.perfy = polyval(poly, Train.perfx);
 
-    Train.Dx = Train.perfx + randn(ntrain,1)*noisex;
-    Train.Dy = Train.perfy + randn(ntrain,1)*noisey;
+    Train.x = Train.perfx + randn(ntrain,1)*trainnoisex;
+    Train.y_m = Train.perfy + randn(ntrain,1)*trainnoisey;
 
+    Train = sortrows(Train,'x');
+
+    testnoisex = 0;
+    testnoisey = 2;
+    
     Test = table();
     Test.perfx = randnconstrained(ntest,1,xrange);
     Test.perfy = polyval(poly, Test.perfx);
 
-    Test.Dx = Test.perfx + randn(ntest,1)*noisex;
-    Test.Dy = Test.perfy + randn(ntest,1)*noisey;
+    Test.x = Test.perfx + randn(ntest,1)*testnoisex;
+    Test.y_m = Test.perfy + randn(ntest,1)*testnoisey;
+    
+    Test = sortrows(Test,'x');
 end
